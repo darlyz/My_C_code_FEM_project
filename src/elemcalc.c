@@ -5,35 +5,37 @@
  All rights reserved
 */
 #include "fem.h"
-
-double transe_coor();
-double inv();
-void calc_real_shap();
-void show_elem_stif();
+#include "calc_shap.h"
+#include "tools.h"
+#include "matrix_compose.h"
+#include "check_and_show.h"
 
 void elemcalc (
     int elem_n,
     Gaus_Info  G_info,
 	Elem_Info  E_info,
-    Elem_Matr *E_matr
+    Elem_Matr *E_matr,
+	Shap_Func  shap_func,
+	Test_Func  test_func
 ){
-    double x,y,z;
-    double rx,ry,rz;
-	double tempvar;
+    static double x,y,z;
+    static double rx,ry,rz;
+	static double tempvar;
 
-    double  u[E_info.nodeN];
-    double ux[E_info.nodeN];
-	double uy[E_info.nodeN];
+    double * u = test_func.u ;
+    double *ux = test_func.ux;
+	double *uy = test_func.uy;
+	double *real_shap = test_func.real_shap;
 
-    double eps,rho;
+    static double eps,rho;
     eps = E_info.mate[0];
     rho = E_info.mate[1];
 
-	double real_coor[3];
-	double refr_coor[3];
-	double jacb_matr[9];
-	double invt_jacb[9];
-	double real_shap[E_info.nodeN*(E_info.g_dim+1)];
+	static double real_coor[3];
+	static double refr_coor[3];
+	static double jacb_matr[9];
+	static double invt_jacb[9];
+
 
     for (int gaus_i = 1; gaus_i <= G_info.gausN; gaus_i ++)
     {
@@ -45,7 +47,7 @@ void elemcalc (
 				jacb_matr[(i-1)*E_info.g_dim+j-1]=0.;
 		}
 
-        double det = transe_coor(real_coor, refr_coor, E_info.coor, jacb_matr, E_info.g_dim, E_info.nodeN);
+        double det = transe_coor(real_coor, refr_coor, E_info.coor, jacb_matr, E_info.g_dim, E_info.nodeN, shap_func);
 
         double invt_det = inv(invt_jacb, jacb_matr, E_info.g_dim);
 

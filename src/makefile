@@ -1,20 +1,23 @@
 CC = gcc
 FLAG = 
 target = tinyfem
-trilinos = /public/software/Trilib
-solvlib = $(trilinos)/lib
-solvinc = $(trilinos)/include
+aztecoo = /mnt/d/Allo_Test/test.fem/AztecOO
+clapack = /mnt/d/Allo_Test/test.fem/CLAPACK
+solvlib = $(aztecoo)
+solvinc = $(aztecoo)
+lpcklib = $(clapack)
+lpckinc = $(clapack)
 
 src = $(wildcard *.c)
 obj = $(patsubst %.c, %.o, $(src))
 
 $(target):$(obj)
-	$(CC) $^ -o $@ $(solvlib)/libaztecoo.a -llapack -lblas -lm
+	$(CC) $^ -o $@ $(solvlib)/libaztec.a $(lpcklib)/liblapack.a -lm
 	mv ./$(target) ..
 	rm *.o
 
 %.o:%.c
-	$(CC) $(FLAG) -c $< -I$(solvinc) -o $@
+	$(CC) $(FLAG) -c $< -I$(solvinc) -I$(lpckinc) -o $@
 
 .PHONY:clean
 clean:

@@ -163,3 +163,14 @@ void show_mesh_mate(Mesh_Mate Emate) {
         printf("\n");
     }
 }
+
+void show_gaussain(Gaus_Info G_info) {
+    printf("\ngaussian node : %d\n", G_info.gausN);
+    printf("local dimension : %d\n", G_info.l_dim);
+    for (int i = 0; i < G_info.gausN; i ++){
+        for (int j = 0; j < G_info.l_dim; j++){
+            printf("%lf ", G_info.gcoor[j*G_info.gausN+i]);
+        }
+        printf("%lf\n", G_info.gweig[i]);
+    }
+}

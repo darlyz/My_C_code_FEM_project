@@ -4,6 +4,10 @@
  Author: Zhang_Licheng
  All rights reserved
 */
+
+#ifndef _FEM_H_
+#define _FEM_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -137,3 +141,5 @@ typedef struct Equation_Set
 	double **matrix;
     double  *vector;
 }Equat_Set;
+
+#endif

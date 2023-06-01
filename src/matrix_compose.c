@@ -4,22 +4,13 @@
  Author: Zhang_Licheng
  All rights reserved
 */
-#include "fem.h"
-
-void set_gaus  ();
-void set_matr  ();
-void set_elem  ();
-void reset_matr();
-void show_elem ();
-void show_matr ();
-void show_elem_matr();
-void clear_matr();
-void clear_elem();
-void set_refr_shap();
-void elemcalc();
-void show_elem_stif();
-int  Binary_Search_();
-int  traversal_search_();
+#include "matrix_compose.h"
+#include "elemcalc.h"
+#include "shap_func.h"
+#include "calc_shap.h"
+#include "gaussain.h"
+#include "tools.h"
+#include "check_and_show.h"
 
 void matrix_compose(
     Coor_Info  Coor,
@@ -44,13 +35,20 @@ void matrix_compose(
         Matr_Type M_type[4]={dist,lump,lump,lump};
 		
 		Gaus_Info G_info;
+        set_gaus(&G_info, Mesh.type[type_i-1]);
+
 		Elem_Info E_info;
-		Elem_Matr E_matr;
-		
-		set_gaus(&G_info);
-		set_matr(&E_matr, ematr_size, M_type);
 		set_elem(&E_info, Coor.dim, elem_nodeN, Mate->varN, G_info.gausN);
-        set_refr_shap(E_info.refr, G_info.gcoor, G_info.gausN, E_info.nodeN, E_info.g_dim);
+
+		Elem_Matr E_matr;
+		set_matr(&E_matr, ematr_size, M_type);
+
+        Shap_Func shap_func = get_shap_func(Mesh.type[type_i-1]);
+
+        Test_Func test_func;
+        set_testfunc(&test_func, E_info.nodeN, E_info.g_dim);
+
+        set_refr_shap(E_info.refr, G_info.gcoor, G_info.gausN, E_info.nodeN, E_info.g_dim, shap_func);
 
         for (int elem_i=1; elem_i<=mesh_scale; elem_i++)
         {
@@ -74,10 +72,10 @@ void matrix_compose(
                     E_info.coor[(dim_i-1)*elem_nodeN + node_i-1] = 
                     Coor.coor[(E_info.topo[node_i-1]-1)*E_info.g_dim + dim_i-1];
             }
-            
+
             reset_matr(&E_matr, ematr_size, M_type);
 
-			elemcalc(elem_i, G_info, E_info, &E_matr);
+			elemcalc(elem_i, G_info, E_info, &E_matr, shap_func, test_func);
 
             //show_elem(E_info, elem_nodeN, Mate->varN, G_info.gausN);
             //show_elem_stif(E_info.nodeN, E_matr);
@@ -161,8 +159,10 @@ void matrix_compose(
                 }
             }
         }
-        clear_matr(&E_matr);
-        clear_elem(&E_info, G_info.gausN);
+
+        //clear_matr(&E_matr);               // ! mem fault if not comm it
+        //clear_elem(&E_info, G_info.gausN); // ! mem fault if not comm it
+        clear_testfunc(&test_func);
     }
 
     //show_matr(*Equa);
@@ -171,7 +171,7 @@ void matrix_compose(
 
 void set_matr(Elem_Matr* E_matr, int elem_dof, Matr_Type *M_type)
 {
-    int size[4];
+    static int size[4];
     for (int i=0; i<4; i++) {
         if     (M_type[i] == lump) size[i] = elem_dof;
         else if(M_type[i] == dist) size[i] = elem_dof*elem_dof;
@@ -186,7 +186,7 @@ void set_matr(Elem_Matr* E_matr, int elem_dof, Matr_Type *M_type)
 
 void reset_matr(Elem_Matr* E_matr, int elem_dof, Matr_Type *M_type)
 {
-    int size[4];
+    static int size[4];
     for (int i=0; i<4; i++){
         if     (M_type[i] == lump) size[i] = elem_dof;
         else if(M_type[i] == dist) size[i] = elem_dof*elem_dof;
@@ -201,12 +201,12 @@ void reset_matr(Elem_Matr* E_matr, int elem_dof, Matr_Type *M_type)
 
 void clear_matr(Elem_Matr* E_matr)
 {
-    free(E_matr->matr_0);
-    free(E_matr->matr_1);
-    free(E_matr->matr_2);
-    free(E_matr->matr_3);
-    free(E_matr->left_matr);
-    free(E_matr->righ_vect);
+    free(E_matr->matr_0);    E_matr->matr_0 = NULL;
+    free(E_matr->matr_1);    E_matr->matr_1 = NULL;
+    free(E_matr->matr_2);    E_matr->matr_2 = NULL;
+    free(E_matr->matr_3);    E_matr->matr_3 = NULL;
+    free(E_matr->left_matr); E_matr->left_matr = NULL;
+    free(E_matr->righ_vect); E_matr->righ_vect = NULL;
 }
 
 void set_elem(Elem_Info *E_info, int dim, int elem_nodeN, int varN, int gausN)
@@ -225,11 +225,27 @@ void set_elem(Elem_Info *E_info, int dim, int elem_nodeN, int varN, int gausN)
 
 void clear_elem(Elem_Info *E_info, int gausN)
 {
-	free(E_info->topo);
-    free(E_info->coor);
+	free(E_info->topo); E_info->topo = NULL;
+    free(E_info->coor); E_info->coor = NULL;
     //free(E_info->coup_valu);
-    free(E_info->mate);
+    free(E_info->mate); E_info->mate = NULL;
 	for (int gaus_i=1; gaus_i<=gausN; gaus_i++)
 		free(E_info->refr[gaus_i-1]);
-	free(E_info->refr);
+	free(E_info->refr); E_info->refr = NULL;
+}
+
+void set_testfunc(Test_Func *test_func, int nodeN, int g_dim){
+    test_func->u  = (double*)malloc(nodeN*sizeof(double));
+    test_func->ux = (double*)malloc(nodeN*sizeof(double));
+    test_func->uy = (double*)malloc(nodeN*sizeof(double));
+    test_func->uz = (double*)malloc(nodeN*sizeof(double));
+    test_func->real_shap = (double*)malloc(nodeN*(g_dim+1)*sizeof(double));
+}
+
+void clear_testfunc(Test_Func *test_func){
+    free(test_func->u );        test_func->u  = NULL;
+    free(test_func->ux);        test_func->ux = NULL;
+    free(test_func->uy);        test_func->uy = NULL;
+    free(test_func->uz);        test_func->uz = NULL;
+    free(test_func->real_shap); test_func->real_shap = NULL;
 }

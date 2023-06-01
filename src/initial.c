@@ -5,18 +5,18 @@
  All rights reserved
 */
 #include "fem.h"
+#include "tools.h"
+#include "check_and_show.h"
 
 #define init_adj_num 20
 #define minsize_int32 -2147483648
 
-void free_adj();
-void int_qsort();
-void insert_node();
-void insert_node_();
-void show_adj();
-void show_node_eq_index();
-void show_non_trivial();
-void show_mesh_mate();
+void free_adj(int total_nodes, int* adj_nodn, int** adj_topo) {
+    for (int i=0; i<total_nodes; i++)
+        free(adj_topo[i]);
+    free(adj_topo);
+    free(adj_nodn);
+}
 
 void initial(
     Coor_Info   Coor,
@@ -220,11 +220,4 @@ void initial(
     ID     = NULL;
     E_ID   = NULL;
     Emate  = NULL;
-}
-
-void free_adj(int total_nodes, int* adj_nodn, int** adj_topo) {
-    for (int i=0; i<total_nodes; i++)
-        free(adj_topo[i]);
-    free(adj_topo);
-    free(adj_nodn);
 }

@@ -5,30 +5,28 @@
  All rights reserved
 */
 #include "fem.h"
-
-void readmesh();
-void readmate();
-void initial ();
-void matrix_compose();
-void matrsolv();
-void show_coor();
-void show_mesh();
-void show_material();
-void show_elem_tag();
-void show_mesh_mate();
-void result_compose();
-void write_result();
-void clear_coor();
-void clear_mesh();
-void clear_field();
+#include "ReadMesh.h"
+#include "ReadMate.h"
+#include "initial.h"
+#include "matrix_compose.h"
+#include "matrix_solve.h"
+#include "resault_compose.h"
+#include "clear_data.h"
+#include "write_resault.h"
+#include "check_and_show.h"
 
 int main(int argc, char* argv[])
 {
+    char *prj = argv[1];
+    char data_file[255]; strcpy(data_file, "./mesh/"); strcat(data_file, prj); strcat(data_file, ".gid/"); strcat(data_file, prj); strcat(data_file, ".dat");
+    char mate_file[255]; strcpy(mate_file, "./mate/"); strcat(mate_file, prj); strcat(mate_file, ".mat");
+    char mesh_file[255]; strcpy(mesh_file, "./mesh/"); strcat(mesh_file, prj); strcat(mesh_file, ".gid/"); strcat(mesh_file, prj); strcat(mesh_file, ".post.msh");
+    char resl_file[255]; strcpy(resl_file, "./mesh/"); strcat(resl_file, prj); strcat(resl_file, ".gid/"); strcat(resl_file, prj); strcat(resl_file, ".post.res");
 
-    char data_file[]="./mesh/exam2.gid/exam2.dat";
-    char mate_file[]="./mate/exam2.mat";
-    char mesh_file[]="./mesh/exam2.gid/exam2.post.msh";
-    char resl_file[]="./mesh/exam2.gid/exam2.post.res";
+    //char data_file[]="./mesh/exam2.gid/exam2.dat";
+    //char mate_file[]="./mate/exam2.mat";
+    //char mesh_file[]="./mesh/exam2.gid/exam2.post.msh";
+    //char resl_file[]="./mesh/exam2.gid/exam2.post.res";
 
     Coor_Info Coor;
     Node_Mesh Mesh;
@@ -59,7 +57,7 @@ int main(int argc, char* argv[])
     //for (int i=0; i<Coor.nodeN; i++) printf("%le\n",Field_A->Res.result[i]);
     //for (int i=0; i<field_SN; i++) show_mesh_mate(Field[i].Emate);
     
-    matrix_compose( Coor, Mesh, Field_A, &Equa );
+    matrix_compose( Coor, Mesh, Field_A, &Equa, 0 );
 
     matrsolv( &Equa );
 

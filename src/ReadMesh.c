@@ -357,6 +357,7 @@ void readmesh(
 }
 
 int assign_mesh_type(char* type_str, Mesh_Type *Mtype, int type_i) {
+
     /*
     if (strncmp(type_str, "l2", 2) == 0)
         Mtype[type_i] = L2;

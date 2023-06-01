@@ -17,7 +17,7 @@ double det(double* matr, int dim) {
     else
     {
         double  sdet  = 0.0;
-        double *sub_matr = (double*)malloc((dim-1)*(dim-1)*sizeof(double)); 
+        static double sub_matr[9];
         for (int i=1; i<=dim; i++)
         {
             int sign = (i%2==0)?-1:1;
@@ -29,7 +29,6 @@ double det(double* matr, int dim) {
                 }
             sdet += sign*matr[i-1]*det(sub_matr,dim-1);
         }
-        free(sub_matr);
         return sdet;
     }
 }
@@ -38,7 +37,7 @@ double det(double* matr, int dim) {
 double inv(double* inv_matr, double* matr, int dim) {
     double sdet = det(matr,dim);
     if (fabs(sdet) < 1e-30) return 1e30;
-    double *sub_matr = (double*)malloc((dim-1)*(dim-1)*sizeof(double));
+    static double sub_matr[9];
     for (int i=1; i<=dim; i++)
         for (int j=1; j<=dim; j++)
         {
@@ -56,7 +55,6 @@ double inv(double* inv_matr, double* matr, int dim) {
             }
             inv_matr[(j-1)*dim + i-1] = sign*det(sub_matr,dim-1)/sdet;
         }
-    free(sub_matr);
     return det(inv_matr, dim);
 }
 

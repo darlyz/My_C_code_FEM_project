@@ -13,13 +13,13 @@
 
 -mesh-
 *Set var numfixnode=0
-*set cond A-Surface-MaterialSN-q4g2 *elems
+*set cond A-Surface-MaterialSN-t3g2 *elems
 *loop elems *OnlyInCond
 *set var numfixnode=operation(numfixnode+1)
 *end
-q4
-*numfixnode 4
-*set cond A-Surface-MaterialSN-q4g2 *elems
+t3
+*numfixnode 3
+*set cond A-Surface-MaterialSN-t3g2 *elems
 *loop elems *OnlyIncond
 *elemsConec
 *end
@@ -72,13 +72,13 @@ q4
 
 -mate-
 *Set var numfixnode=0
-*set cond A-Surface-MaterialSN-q4g2 *elems
+*set cond A-Surface-MaterialSN-t3g2 *elems
 *loop elems *OnlyInCond
 *set var numfixnode=operation(numfixnode+1)
 *end
-q4
+t3
 *numfixnode
-*set cond A-Surface-MaterialSN-q4g2 *elems
+*set cond A-Surface-MaterialSN-t3g2 *elems
 *loop elems *OnlyIncond
 *ElemsNum *cond(1)
 *end
