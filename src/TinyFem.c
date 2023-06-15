@@ -14,6 +14,7 @@
 #include "clear_data.h"
 #include "write_resault.h"
 #include "check_and_show.h"
+//#include "write_mesh.h"
 
 int main(int argc, char* argv[])
 {
@@ -39,7 +40,8 @@ int main(int argc, char* argv[])
     int field_SN = 0;
 
     readmesh( &Coor, &Mesh, Field, &field_SN, data_file );
-
+    //char msh_file[255]; strcpy(msh_file, "./mesh/"); strcat(msh_file, prj);
+    //write_gmsh_mesh( &Coor, &Mesh, &(Field[0].E_ID), msh_file);
     readmate( Field, field_SN, mate_file );
     
     //show_coor(Coor);

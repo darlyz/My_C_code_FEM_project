@@ -6,7 +6,7 @@
 */
 #include "shap_func.h"
 
-double lagrange_shapfunc_t3(double *shap_coor, int node_i) //triangle
+double lagrange_shapfunc_t3(double *shap_coor, int node_i) // Triangle
 {
 	double u,v;
 	double shap_val = 0.0;
@@ -14,16 +14,13 @@ double lagrange_shapfunc_t3(double *shap_coor, int node_i) //triangle
 	v = shap_coor[1];
 	switch (node_i)
     {
-    case 1:  shap_val = +u;
-        break;
-    case 2:  shap_val = +v;
-        break;
-    case 3:  shap_val = +(+1.-u-v);
-        break;
+    case 1: shap_val = +u;         break;
+    case 2: shap_val = +v;         break;
+    case 3: shap_val = +(+1.-u-v); break;
 	}
 	return shap_val;
 }
-double lagrange_deriva_shapfunc_t3(double *shap_coor, int node_i, int coor_i) // triangle
+double lagrange_deriva_shapfunc_t3(double *shap_coor, int node_i, int coor_i) // Triangle
 {
 	double u,v;
 	double shap_val = 0.0;
@@ -52,7 +49,7 @@ double lagrange_deriva_shapfunc_t3(double *shap_coor, int node_i, int coor_i) //
 	}
 	return shap_val;
 }
-double lagrange_shapfunc_q4(double *shap_coor, int node_i) //quadrilateral
+double lagrange_shapfunc_q4(double *shap_coor, int node_i) // Quadrilateral
 {
 	double u,v;
 	double shap_val = 0.0;
@@ -60,18 +57,14 @@ double lagrange_shapfunc_q4(double *shap_coor, int node_i) //quadrilateral
 	v = shap_coor[1];
 	switch (node_i)
     {
-    case 1:  shap_val = +(+1.-u)*(+1.-v)/4.;
-        break;
-    case 2:  shap_val = +(+1.+u)*(+1.-v)/4.;
-        break;
-    case 3:  shap_val = +(+1.+u)*(+1.+v)/4.;
-        break;
-    case 4:  shap_val = +(+1.-u)*(+1.+v)/4.;
-        break;
+    case 1: shap_val = +(+1.-u) * (+1.-v) * 0.25; break;
+    case 2: shap_val = +(+1.+u) * (+1.-v) * 0.25; break;
+    case 3: shap_val = +(+1.+u) * (+1.+v) * 0.25; break;
+    case 4: shap_val = +(+1.-u) * (+1.+v) * 0.25; break;
 	}
 	return shap_val;
 }
-double lagrange_deriva_shapfunc_q4(double *shap_coor, int node_i, int coor_i) // quadrilateral
+double lagrange_deriva_shapfunc_q4(double *shap_coor, int node_i, int coor_i) // Quadrilateral
 {
 	double u,v;
 	double shap_val = 0.0;
@@ -81,28 +74,171 @@ double lagrange_deriva_shapfunc_q4(double *shap_coor, int node_i, int coor_i) //
     {
     case 1: 
 		switch(coor_i){
-			case 1: shap_val = -(+1.-v)/4.; break;
-			case 2: shap_val = -(+1.-u)/4.; break;
+			case 1: shap_val = -(+1.-v) * 0.25; break;
+			case 2: shap_val = -(+1.-u) * 0.25; break;
 		}
         break;
     case 2: 
 		switch(coor_i){
-			case 1: shap_val = +(+1.-v)/4.; break;
-			case 2: shap_val = -(+1.+u)/4.; break;
+			case 1: shap_val = +(+1.-v) * 0.25; break;
+			case 2: shap_val = -(+1.+u) * 0.25; break;
 		}
         break;
     case 3: 
 		switch(coor_i){
-			case 1: shap_val = +(+1.+v)/4.; break;
-			case 2: shap_val = +(+1.+u)/4.; break;
+			case 1: shap_val = +(+1.+v) * 0.25; break;
+			case 2: shap_val = +(+1.+u) * 0.25; break;
 		}
         break;
     case 4:
 		switch(coor_i){
-			case 1: shap_val = -(+1.+v)/4.; break;
-			case 2: shap_val = +(+1.-u)/4.; break;
+			case 1: shap_val = -(+1.+v) * 0.25; break;
+			case 2: shap_val = +(+1.-u) * 0.25; break;
 		}
         break;
+	}
+	return shap_val;
+}
+double lagrange_shapfunc_w4(double *shap_coor, int node_i) // Tetrahedron
+{
+	double u,v,w;
+	double shap_val = 0.0;
+	u = shap_coor[0];
+	v = shap_coor[1];
+	w = shap_coor[2];
+	switch (node_i)
+	{
+	case 1:  shap_val = +u;           break;
+	case 2:  shap_val = +v;           break;
+	case 3:  shap_val = +w;           break;
+	case 4:  shap_val = +(+1.-u-v-w); break;
+	}
+	return shap_val;
+}
+double lagrange_deriva_shapfunc_w4(double *shap_coor, int node_i, int coor_i) // Tetrahedron
+{
+	double u,v,w;
+	double shap_val = 0.0;
+	u = shap_coor[0];
+	v = shap_coor[1];
+	w = shap_coor[2];
+	switch (node_i)
+	{
+	case 1: 
+		switch(coor_i){
+			case 1: shap_val = 1.; break;
+			case 2: shap_val = 0.; break;
+			case 3: shap_val = 0.; break;
+		}
+		break;
+	case 2: 
+		switch(coor_i){
+			case 1: shap_val = 0.; break;
+			case 2: shap_val = 1.; break;
+			case 3: shap_val = 0.; break;
+		}
+		break;
+	case 3: 
+		switch(coor_i){
+			case 1: shap_val = 0.; break;
+			case 2: shap_val = 0.; break;
+			case 3: shap_val = 1.; break;
+		}
+		break;
+	case 4: 
+		switch(coor_i){
+			case 1: shap_val = -1.; break;
+			case 2: shap_val = -1.; break;
+			case 3: shap_val = -1.; break;
+		}
+		break;
+	}
+	return shap_val;
+}
+double lagrange_shapfunc_c8(double *shap_coor, int node_i) // Hexahedron
+{
+	double u,v,w;
+	double shap_val = 0.0;
+	u = shap_coor[0];
+	v = shap_coor[1];
+	w = shap_coor[2];
+	switch (node_i)
+	{
+	case 1: shap_val = + (1.-u) * (1.-v) * (1.-w) * 0.125; break;
+	case 2: shap_val = + (1.+u) * (1.-v) * (1.-w) * 0.125; break;
+	case 3: shap_val = + (1.+u) * (1.+v) * (1.-w) * 0.125; break;
+	case 4: shap_val = + (1.-u) * (1.+v) * (1.-w) * 0.125; break;
+	case 5: shap_val = + (1.-u) * (1.-v) * (1.+w) * 0.125; break;
+	case 6: shap_val = + (1.+u) * (1.-v) * (1.+w) * 0.125; break;
+	case 7: shap_val = + (1.+u) * (1.+v) * (1.+w) * 0.125; break;
+	case 8: shap_val = + (1.-u) * (1.+v) * (1.+w) * 0.125; break;
+	}
+	return shap_val;
+}
+double lagrange_deriva_shapfunc_c8(double *shap_coor, int node_i, int coor_i) // Hexahedron
+{
+	double u,v,w;
+	double shap_val = 0.0;
+	u = shap_coor[0];
+	v = shap_coor[1];
+	w = shap_coor[2];
+	switch (node_i)
+	{
+	case 1: 
+		switch(coor_i){
+			case 1: shap_val = - (1.-v) * (1.-w) * 0.125; break;
+			case 2: shap_val = - (1.-u) * (1.-w) * 0.125; break;
+			case 3: shap_val = - (1.-u) * (1.-v) * 0.125; break;
+		}
+		break;
+	case 2: 
+		switch(coor_i){
+			case 1: shap_val = + (1.-v) * (1.-w) * 0.125; break;
+			case 2: shap_val = - (1.+u) * (1.-w) * 0.125; break;
+			case 3: shap_val = - (1.+u) * (1.-v) * 0.125; break;
+		}
+		break;
+	case 3: 
+		switch(coor_i){
+			case 1: shap_val = + (1.+v) * (1.-w) * 0.125; break;
+			case 2: shap_val = + (1.+u) * (1.-w) * 0.125; break;
+			case 3: shap_val = - (1.+u) * (1.+v) * 0.125; break;
+		}
+		break;
+	case 4: 
+		switch(coor_i){
+			case 1: shap_val = - (1.+v) * (1.-w) * 0.125; break;
+			case 2: shap_val = + (1.-u) * (1.-w) * 0.125; break;
+			case 3: shap_val = - (1.-u) * (1.+v) * 0.125; break;
+		}
+		break;
+	case 5: 
+		switch(coor_i){
+			case 1: shap_val = - (1.-v) * (1.+w) * 0.125; break;
+			case 2: shap_val = - (1.-u) * (1.+w) * 0.125; break;
+			case 3: shap_val = + (1.-u) * (1.-v) * 0.125; break;
+		}
+		break;
+	case 6: 
+		switch(coor_i){
+			case 1: shap_val = + (1.-v) * (1.+w) * 0.125; break;
+			case 2: shap_val = - (1.+u) * (1.+w) * 0.125; break;
+			case 3: shap_val = + (1.+u) * (1.-v) * 0.125; break;
+		}
+		break;
+	case 7: 
+		switch(coor_i){
+			case 1: shap_val = + (1.+v) * (1.+w) * 0.125; break;
+			case 2: shap_val = + (1.+u) * (1.+w) * 0.125; break;
+			case 3: shap_val = + (1.+u) * (1.+v) * 0.125; break;
+		}
+		break;
+	case 8: 
+		switch(coor_i){
+			case 1: shap_val = - (1.+v) * (1.+w) * 0.125; break;
+			case 2: shap_val = + (1.-u) * (1.+w) * 0.125; break;
+			case 3: shap_val = + (1.-u) * (1.+v) * 0.125; break;
+		}
 	}
 	return shap_val;
 }
@@ -120,6 +256,14 @@ Shap_Func get_shap_func(Mesh_Type MType){
     case Q4:
 		shap_func.lagrange_shapfunc_ptr = lagrange_shapfunc_q4;
 		shap_func.lagrange_deriva_shapfunc_ptr = lagrange_deriva_shapfunc_q4;
+		break;
+    case W4: 
+		shap_func.lagrange_shapfunc_ptr = lagrange_shapfunc_w4;
+		shap_func.lagrange_deriva_shapfunc_ptr = lagrange_deriva_shapfunc_w4;
+		break;
+    case C8: 
+		shap_func.lagrange_shapfunc_ptr = lagrange_shapfunc_c8;
+		shap_func.lagrange_deriva_shapfunc_ptr = lagrange_deriva_shapfunc_c8;
 		break;
     default:
         break;

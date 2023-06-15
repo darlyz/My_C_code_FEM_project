@@ -10,13 +10,21 @@
 
 #include "fem.h"
 
-double lagrange_shapfunc_t3(double *shap_coor, int node_i); //triangle
+double lagrange_shapfunc_t3(double *shap_coor, int node_i); // Triangle
 
-double lagrange_deriva_shapfunc_t3(double *shap_coor, int node_i, int coor_i); // triangle
+double lagrange_deriva_shapfunc_t3(double *shap_coor, int node_i, int coor_i); // Triangle
 
-double lagrange_shapfunc_q4(double *shap_coor, int node_i); //quadrilateral
+double lagrange_shapfunc_q4(double *shap_coor, int node_i); // Quadrilateral
 
-double lagrange_deriva_shapfunc_q4(double *shap_coor, int node_i, int coor_i); // quadrilateral
+double lagrange_deriva_shapfunc_q4(double *shap_coor, int node_i, int coor_i); // Quadrilateral
+
+double lagrange_shapfunc_w4(double *shap_coor, int node_i); // Tetrahedron
+
+double lagrange_deriva_shapfunc_w4(double *shap_coor, int node_i, int coor_i); // Tetrahedron
+
+double lagrange_shapfunc_c8(double *shap_coor, int node_i); // Hexahedron
+
+double lagrange_deriva_shapfunc_c8(double *shap_coor, int node_i, int coor_i); // Hexahedron
 
 typedef double (*Type_Lagrange_Shapfunc_Ptr)(double*, int);
 

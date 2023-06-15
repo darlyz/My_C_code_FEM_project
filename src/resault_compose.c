@@ -5,6 +5,8 @@
  All rights reserved
 */
 #include "fem.h"
+#include "shap_func.h"
+#include "gaussain.h"
 
 void result_compose( Equat_Set Equa, Field_info Field, int total_nodes ) {
 
@@ -23,4 +25,8 @@ void result_compose( Equat_Set Equa, Field_info Field, int total_nodes ) {
     }
 
     printf("result composed done!\n");
+}
+
+void derivate_result(Field_info Field, Coor_Info Coor, Node_Mesh Mesh) {
+    Shap_Func shap_func;
 }

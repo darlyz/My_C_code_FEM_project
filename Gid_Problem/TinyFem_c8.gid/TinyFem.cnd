@@ -1,0 +1,60 @@
+NUMBER: 1 CONDITION: A-surface-Constraints
+CONDTYPE: over surfaces
+CONDMESHTYPE: over nodes
+QUESTION: u-ID
+VALUE: -1
+QUESTION: u-Value
+VALUE: 0.0
+END CONDITION
+
+NUMBER: 2 CONDITION: A-line-Constraints
+CONDTYPE: over lines
+CONDMESHTYPE: over nodes
+QUESTION: u-ID
+VALUE: -1
+QUESTION: u-Value
+VALUE: 0.0
+END CONDITION
+
+NUMBER: 3 CONDITION: A-point-Constraints
+CONDTYPE: over points
+CONDMESHTYPE: over nodes
+QUESTION: u-ID
+VALUE: -1
+QUESTION: u-Value
+VALUE: 0.0
+END CONDITION
+
+NUMBER: 4 CONDITION: A-Volume-MaterialSN-c8g2
+CONDTYPE: over Volumes
+QUESTION: mate_SN
+VALUE: 1
+END CONDITION
+
+NUMBER: 5 CONDITION: A-Volume-initial-data1
+CONDTYPE: over Volumes
+CONDMESHTYPE: over nodes
+QUESTION: u-D1
+VALUE: 0
+END CONDITION
+
+NUMBER: 6 CONDITION: A-surface-initial-data1
+CONDTYPE: over surfaces
+CONDMESHTYPE: over nodes
+QUESTION: u-D1
+VALUE: 0
+END CONDITION
+
+NUMBER: 7 CONDITION: A-line-initial-data1
+CONDTYPE: over lines
+CONDMESHTYPE: over nodes
+QUESTION: u-D1
+VALUE: 0
+END CONDITION
+
+NUMBER: 8 CONDITION: A-point-initial-data1
+CONDTYPE: over points
+CONDMESHTYPE: over nodes
+QUESTION: u-D1
+VALUE: 0
+END CONDITION
