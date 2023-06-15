@@ -1,5 +1,5 @@
 #!/bin/bash
-DestPath=/mnt/d/ECTEC/PFELAC2.2/GiD/problemtypes/TinyFem.gid
+DestPath=$GidPath/problemtypes/TinyFem.gid
 
 if [ $# -gt 0 ]
 then
