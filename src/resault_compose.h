@@ -10,6 +10,14 @@
 
 #include "fem.h"
 
+typedef struct Derivative_Resault
+{
+    int dofN;
+    int nodeN;
+    double *result;
+    int *accum;
+}Deriv_Res;
+
 void result_compose( Equat_Set Equa, Field_info Field, int total_nodes );
 
 #endif
