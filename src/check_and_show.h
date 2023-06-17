@@ -14,7 +14,7 @@
 void show_elem_stif(int nodeN, Elem_Matr E_matr);
 
 // used it in initial.c
-void show_adj(int* adj_nodn, int** adj_topo, int total_nodes);
+void show_adj(const int* adj_nodn, const int** adj_topo, int total_nodes);
 
 // used it in initial.c
 void show_node_eq_index(Equat_Set Equa, int total_nodes, int node_dof);
@@ -37,7 +37,7 @@ void show_mesh(Node_Mesh Mesh);
 
 void show_elem_tag(Elem_Tag E_ID);
 
-void show_material(Field_info *Field, int field_SN);
+void show_material(const Field_info *Field, int field_SN);
 
 void show_mesh_mate(Mesh_Mate Emate);
 

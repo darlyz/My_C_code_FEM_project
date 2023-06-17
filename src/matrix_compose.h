@@ -18,9 +18,9 @@ void matrix_compose(
     int Field_i
 );
 
-void set_matr(Elem_Matr* E_matr, int elem_dof, Matr_Type *M_type);
+void set_matr(Elem_Matr* E_matr, int elem_dof, const Matr_Type *M_type);
 
-void reset_matr(Elem_Matr* E_matr, int elem_dof, Matr_Type *M_type);
+void reset_matr(Elem_Matr* E_matr, int elem_dof, const Matr_Type *M_type);
 
 void clear_matr(Elem_Matr* E_matr);
 

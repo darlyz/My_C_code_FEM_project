@@ -9,6 +9,8 @@
 #include "gaussain.h"
 #include "resault_compose.h"
 #include "matrix_compose.h"
+#include "calc_shap.h"
+#include "tools.h"
 
 void result_compose( Equat_Set Equa, Field_info Field, int total_nodes ) {
 

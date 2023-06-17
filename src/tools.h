@@ -13,26 +13,26 @@
 #include <string.h>
 
 // return sdet
-double det(double* matr, int dim);
+double det(const double* matr, int dim);
 
 // return *inv_matr, |inv_matr|
-double inv(double* inv_matr, double* matr, int dim);
+double inv(double* inv_matr, const double* matr, int dim);
 
 int compare_int(const void *value1, const void *value2);
 
 void int_qsort(int* array, int array_len);
 
 // return -1 if found, return insert index if not found
-int Binary_Search(int* dest, int dest_len, int key);
+int Binary_Search(const int* dest, int dest_len, int key);
 
 // return -1 if not found, return matched index if found
-int Binary_Search_(int* dest, int dest_len, int key);
+int Binary_Search_(const int* dest, int dest_len, int key);
 
 // return -1 if found, return insert index if not found
-int traversal_search(int* dest, int dest_len, int key);
+int traversal_search(const int* dest, int dest_len, int key);
 
 // return -1 if not found, return matched index if found
-int traversal_search_(int* dest, int dest_len, int key);
+int traversal_search_(const int* dest, int dest_len, int key);
 
 // insert insert_SN into dest[] and length++
 void insert_node(int** dest, int* length, int init_length, int insert_SN);

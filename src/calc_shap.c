@@ -11,8 +11,8 @@ double det(double*,int);
 
 // return *jacb_matr and |jacb_matr|
 double calc_jacobi(
-    double* node_coor,
-    double* refr_coor,
+    const double* node_coor,
+    const double* refr_coor,
     double* jacb_matr,
     int dim,
     int shap_nodn,
@@ -28,8 +28,8 @@ double calc_jacobi(
 // return *real_coor, *jacb_matr and |jacb_matr|
 double transe_coor(
     double* real_coor,
-    double* refr_coor,
-    double* node_coor,
+    const double* refr_coor,
+    const double* node_coor,
     double* jacb_matr,
     int dim,
     int shap_nodn,
@@ -44,7 +44,7 @@ double transe_coor(
 // return *refr_shap
 void calc_refr_shap(
     double* refr_shap,
-    double* refr_coor,
+    const double* refr_coor,
     int node_cont,
     int dim,
     Shap_Func shap_func
@@ -60,7 +60,7 @@ void calc_refr_shap(
 // return **refr_shap
 void set_refr_shap(
     double** refr_shap,
-    double* gaus_coor,
+    const double* gaus_coor,
     int gaus_num,
     int node_cont,
     int dim,
@@ -76,7 +76,7 @@ void set_refr_shap(
 }
 
 // return *real_shap
-void calc_real_shap(int dim, int node_cont, double* refr_shap, double* real_shap, double* invt_jacb)
+void calc_real_shap(int dim, int node_cont, const double* refr_shap, double* real_shap, const double* invt_jacb)
 {
     for (int node_i=1; node_i<=node_cont; node_i++)
     {

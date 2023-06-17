@@ -18,7 +18,7 @@ void show_elem_stif(int nodeN, Elem_Matr E_matr) {
 }
 
 // used it in initial.c
-void show_adj(int* adj_nodn, int** adj_topo, int total_nodes) {
+void show_adj(const int* adj_nodn, const int** adj_topo, int total_nodes) {
     for (int i=0; i<total_nodes; i++) {
         printf("%d, %d : ",i+1,adj_nodn[i]);
         for (int j=0; j<adj_nodn[i]; j++)
@@ -92,7 +92,7 @@ void show_matr(Equat_Set Equa) {
 }
 
 // used it in matrcalc.c
-void show_elem_matr(Elem_Matr E_matr, int ematr_size, Matr_Type *M_type) {
+void show_elem_matr(Elem_Matr E_matr, int ematr_size, const Matr_Type *M_type) {
     int size[4];
     for (int i=0; i<4; i++){
         if     (M_type[i] == lump) size[i] = ematr_size;
@@ -142,7 +142,7 @@ void show_elem_tag(Elem_Tag E_ID) {
     }
 }
 
-void show_material(Field_info *Field, int field_SN) {
+void show_material(const Field_info *Field, int field_SN) {
     for (int i = 0; i <field_SN; i++){
         printf("%d %d\n", Field[i].Mate.mateN, Field[i].Mate.varN);
         for (int j = 0; j <Field[i].Mate.mateN; j++) {

@@ -11,7 +11,7 @@
 #define init_adj_num 20
 
 // return sdet
-double det(double* matr, int dim) {
+double det(const double* matr, int dim) {
     if      (dim == 1) return matr[0];
     else if (dim == 2) return matr[(1-1)*dim + 1-1]*matr[(2-1)*dim + 2-1] - matr[(1-1)*dim + 2-1]*matr[(2-1)*dim + 1-1];
     else
@@ -34,7 +34,7 @@ double det(double* matr, int dim) {
 }
 
 // return *inv_matr, |inv_matr|
-double inv(double* inv_matr, double* matr, int dim) {
+double inv(double* inv_matr, const double* matr, int dim) {
     double sdet = det(matr,dim);
     if (fabs(sdet) < 1e-30) return 1e30;
     static double sub_matr[9];
@@ -67,7 +67,7 @@ void int_qsort(int* array, int array_len) {
 }
 
 // return -1 if found, return insert index if not found
-int Binary_Search(int* dest, int dest_len, int key) {
+int Binary_Search(const int* dest, int dest_len, int key) {
     int idx_start = 0;
     int idx_end   = dest_len-1;
     int idx_mid   = -1;
@@ -101,7 +101,7 @@ int Binary_Search(int* dest, int dest_len, int key) {
 }
 
 // return -1 if not found, return matched index if found
-int Binary_Search_(int* dest, int dest_len, int key) {
+int Binary_Search_(const int* dest, int dest_len, int key) {
     int idx_start = 0;
     int idx_end   = dest_len-1;
     int idx_mid   = -1;
@@ -127,7 +127,7 @@ int Binary_Search_(int* dest, int dest_len, int key) {
 }
 
 // return -1 if found, return insert index if not found
-int traversal_search(int* dest, int dest_len, int key) {
+int traversal_search(const int* dest, int dest_len, int key) {
     for (int i=0; i<dest_len; i++) {
         if ( dest[0] > key )
             return 0;
@@ -142,7 +142,7 @@ int traversal_search(int* dest, int dest_len, int key) {
 }
 
 // return -1 if not found, return matched index if found
-int traversal_search_(int* dest, int dest_len, int key) {
+int traversal_search_(const int* dest, int dest_len, int key) {
     for (int i=0; i<dest_len; i++) {
         if ( dest[0] > key )
             return -1;

@@ -1,3 +1,5 @@
 .idea
 .vscode
 tinyfem
+src/.idea
+src/cmake-build-debug

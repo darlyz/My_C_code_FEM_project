@@ -169,7 +169,7 @@ void matrix_compose(
     printf("Compose whole matrix done!\n");
 }
 
-void set_matr(Elem_Matr* E_matr, int elem_dof, Matr_Type *M_type)
+void set_matr(Elem_Matr* E_matr, int elem_dof, const Matr_Type *M_type)
 {
     static int size[4];
     for (int i=0; i<4; i++) {
@@ -184,7 +184,7 @@ void set_matr(Elem_Matr* E_matr, int elem_dof, Matr_Type *M_type)
     E_matr->righ_vect = (double*)malloc(elem_dof         *sizeof(double));
 }
 
-void reset_matr(Elem_Matr* E_matr, int elem_dof, Matr_Type *M_type)
+void reset_matr(Elem_Matr* E_matr, int elem_dof, const Matr_Type *M_type)
 {
     static int size[4];
     for (int i=0; i<4; i++){
