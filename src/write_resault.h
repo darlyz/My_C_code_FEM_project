@@ -10,6 +10,6 @@
 
 #include "fem.h"
 
-void write_result(Coor_Info Coor, Node_Mesh Mesh, Field_info Field, char* mesh_file, char* resl_file);
+void write_result(Coor_Info Coor, Node_Mesh Mesh, Field_info Field, char* mesh_file, char* resl_file, char* prj_name);
 
 #endif

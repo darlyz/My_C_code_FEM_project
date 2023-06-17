@@ -1,5 +1,5 @@
 GID Post Results File 1.0
-Result "exam3" "Load Analysis"  1 Scalar OnNodes
+Result "exam11" "Load Analysis"  1 Scalar OnNodes
 ComponentNames "u"
 Values
 1 1.000000e+00

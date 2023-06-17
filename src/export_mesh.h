@@ -6,8 +6,8 @@
  All rights reserved
 */
 
-#ifndef _WRITE_MESH_H_
-#define _WRITE_MESH_H_
+#ifndef _EXPORT_MESH_H_
+#define _EXPORT_MESH_H_
 
 #include "fem.h"
 

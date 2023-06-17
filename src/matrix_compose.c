@@ -216,7 +216,7 @@ void set_elem(Elem_Info *E_info, int dim, int elem_nodeN, int varN, int gausN)
 	
 	E_info->topo = (int*    )malloc(E_info->nodeN * sizeof(int));
 	E_info->coor = (double* )malloc(E_info->nodeN * E_info->g_dim * sizeof(double));
-	//E_info->coup_valu = (double*)malloc(E_info->nodeN * coupN * sizeof(double));
+	//E_info->coup = (double*)malloc(E_info->nodeN * coupN * sizeof(double));
 	E_info->mate = (double* )malloc(varN  * sizeof(double));
 	E_info->refr = (double**)malloc(gausN * sizeof(double*));
 	for (int gaus_i=1; gaus_i<=gausN; gaus_i++)
@@ -227,7 +227,7 @@ void clear_elem(Elem_Info *E_info, int gausN)
 {
 	free(E_info->topo); E_info->topo = NULL;
     free(E_info->coor); E_info->coor = NULL;
-    //free(E_info->coup_valu);
+    //free(E_info->coup);
     free(E_info->mate); E_info->mate = NULL;
 	for (int gaus_i=1; gaus_i<=gausN; gaus_i++)
 		free(E_info->refr[gaus_i-1]);

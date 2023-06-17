@@ -1,4 +1,4 @@
-Mesh "aeq4g2" Dimension 3 Elemtype Tetrahedra Nnode 4
+Mesh "ES - W4" Dimension 3 Elemtype Tetrahedra Nnode 4
 Coordinates
 1 0.000000e+00 1.000000e+00 1.000000e+00
 2 1.000000e-01 1.000000e+00 1.000000e+00

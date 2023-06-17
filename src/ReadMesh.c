@@ -9,8 +9,8 @@
 
 #define show_tag 0
 
-int  assign_mesh_type();
-void assign_local_dim();
+int  assign_mesh_type(char*, Mesh_Type*, int);
+void assign_local_dim(Mesh_Type, int*);
 
 void readmesh(
     Coor_Info   *Coor,
@@ -103,253 +103,259 @@ void readmesh(
             continue;
         }
 
-        if (dataparagh == coor) {
+        switch (dataparagh)
+        {
+            case coor: {
 
-            if (line_count == 1) {
+                if (line_count == 1) {
 
-                sscanf(temp_str, "%d %d", &(Coor->nodeN), &(Coor->dim));
+                    sscanf(temp_str, "%d %d", &(Coor->nodeN), &(Coor->dim));
 
-                Coor->coor = (double*)malloc(Coor->nodeN
-                                            *Coor->dim
-                                            *sizeof(double));
-            }
-            else if (line_count < Coor->nodeN + 2) {
-
-                int  word_count = 0;
-                int  word_begin = 0;
-                bool word_find  = true;
-
-                for (int i=0; temp_str[i] != '\0'; i++) {
-
-                    if ( isspace(temp_str[i]) && word_find ) {
-
-                        word_find = false;
-                        temp_str[i] = '\0';
-
-                        sscanf(temp_str + word_begin, "%lg",
-                             &(Coor->coor[(line_count-2)*Coor->dim + word_count]));
-
-                        word_count ++;
-                    }
-
-                    else if ( !isspace(temp_str[i]) && !word_find ) {
-                        word_find  = true;
-                        word_begin = i;
-                    }
+                    Coor->coor = (double*)malloc(Coor->nodeN
+                                                *Coor->dim
+                                                *sizeof(double));
                 }
-            }
+                else if (line_count < Coor->nodeN + 2) {
 
-            if (show_tag && (line_count == Coor->nodeN + 2) ) printf("Read coor end.\n");
-        }
+                    int  word_count = 0;
+                    int  word_begin = 0;
+                    bool word_find  = true;
 
-        else if (dataparagh == mesh) {
+                    for (int i=0; temp_str[i] != '\0'; i++) {
 
-            if (line_count == 1) {
-                if ( assign_mesh_type(temp_str, Mesh->type, Mesh->typeN-1) )
-                    return;
-                assign_local_dim(Mesh->type[Mesh->typeN-1], &(Mesh->l_dim[Mesh->typeN-1]));
-            }
+                        if ( isspace(temp_str[i]) && word_find ) {
 
-            else if (line_count == 2) {
+                            word_find = false;
+                            temp_str[i] = '\0';
 
-                sscanf(temp_str, "%d %d", &(Mesh->scale[Mesh->typeN-1]),
-                                          &(Mesh->nodeN[Mesh->typeN-1]));
-
-                Mesh->topo[Mesh->typeN-1]  = (int*)malloc(sizeof(int)*
-                                           Mesh->scale[Mesh->typeN-1]*
-                                           Mesh->nodeN[Mesh->typeN-1]);
-            }
-
-            else if (line_count < Mesh->scale[Mesh->typeN-1] + 3) {
-
-                int  word_count = 0;
-                int  word_begin = 0;
-                bool word_find  = true;
-
-                for (int i=0; temp_str[i] != '\0'; i++) {
-
-                    if ( isspace(temp_str[i]) && word_find ) {
-
-                        word_find = false;
-                        temp_str[i] = '\0';
-
-                        sscanf(temp_str + word_begin, "%d",
-                             &(Mesh->topo[Mesh->typeN-1][(line_count-3)*Mesh->nodeN[Mesh->typeN-1] + word_count]) );
-
-                        word_count ++;
-                    }
-
-                    else if ( !isspace(temp_str[i]) && !word_find ) {
-                        word_find  = true;
-                        word_begin = i;
-                    }
-                }
-            }
-
-            if (show_tag && (line_count == Mesh->scale[Mesh->typeN-1] + 3) ) printf("Read mesh end.\n");
-        }
-
-        else if (dataparagh == id) {
-
-            if (line_count == 1) {
-
-                sscanf(temp_str, "%d %d", &(ID->nodeN), &(ID->dofN));
-
-                ID->nodeSN = (int*   )malloc(ID->nodeN * sizeof(int));
-                ID->dofID  = (int*   )malloc(ID->nodeN * ID->dofN * sizeof(int));
-                ID->dofval = (double*)malloc(ID->nodeN * ID->dofN * sizeof(double));
-            }
-            else if (line_count < ID->nodeN + 2) {
-
-                int  word_count = 0;
-                int  word_begin = 0;
-                bool word_find  = true;
-
-                for (int i=0; temp_str[i] != '\0'; i++) {
-
-                    if ( isspace(temp_str[i]) && word_find ) {
-
-                        word_find = false;
-                        temp_str[i] = '\0';
-
-                        if (word_count == 0)
-                            sscanf(temp_str + word_begin, "%d", &(ID->nodeSN[line_count-2]));
-                        
-                        else
-                            sscanf(temp_str + word_begin, "%d",
-                                 &(ID->dofID[(line_count-2)*ID->dofN + word_count-1]));
-                        
-                        word_count ++;
-                    }
-
-                    else if ( !isspace(temp_str[i]) && !word_find ) {
-                        word_find  = true;
-                        word_begin = i;
-                    }
-                }
-            }
-        }
-
-        else if (dataparagh == value) {
-
-            if (line_count == 1) {
-                continue;
-            }
-
-            else if (line_count < ID->nodeN + 2) {
-
-                int  word_count = 0;
-                int  word_begin = 0;
-                bool word_find  = true;
-
-                for (int i=0; temp_str[i] != '\0'; i++) {
-
-                    if ( isspace(temp_str[i]) && word_find ) {
-
-                        word_find = false;
-                        temp_str[i] = '\0';
-
-                        if (word_count != 0)
                             sscanf(temp_str + word_begin, "%lg",
-                                 &(ID->dofval[(line_count-2)*ID->dofN + word_count-1]));
-                        
-                        word_count ++;
-                    }
+                                 &(Coor->coor[(line_count-2)*Coor->dim + word_count]));
 
-                    else if ( !isspace(temp_str[i]) && !word_find ) {
-                        word_find  = true;
-                        word_begin = i;
-                    }
-                }
-            }
-
-            if (show_tag && (line_count == ID->nodeN + 2) ) printf("Read constraint end.\n");
-        }
-
-        else if (dataparagh == init) {
-
-            if (line_count == 1) {
-
-                switch(Init->order) {
-                    case 1:
-                        sscanf(temp_str, "%d %d", &Init->nodeN, &Init->dofN);
-                        Init->init_0 = (double*)malloc(Init->nodeN*Init->dofN*sizeof(double));
-                        break;
-                    case 2:
-                        Init->init_1 = (double*)malloc(Init->nodeN*Init->dofN*sizeof(double));
-                        break;
-                    case 3:
-                        Init->init_2 = (double*)malloc(Init->nodeN*Init->dofN*sizeof(double));
-                        break;
-                }
-
-            }
-
-            else if (line_count < Init->nodeN + 2) {
-
-                int  word_count = 0;
-                int  word_begin = 0;
-                bool word_find  = true;
-
-                for (int i=0; temp_str[i] != '\0'; i++) {
-
-                    if ( isspace(temp_str[i]) && word_find ) {
-
-                        word_find = false;
-                        temp_str[i] = '\0';
-
-                        if (word_count != 0) {
-
-                            switch(Init->order) {
-                                case 0:
-                                    sscanf(temp_str + word_begin, "%lg",
-                                         &(Init->init_0[(line_count-2)*Init->dofN + word_count-1]));
-                                    break;
-                                case 1:
-                                    sscanf(temp_str + word_begin, "%lg",
-                                         &(Init->init_1[(line_count-2)*Init->dofN + word_count-1]));
-                                    break;
-                                case 2:
-                                    sscanf(temp_str + word_begin, "%lg",
-                                         &(Init->init_2[(line_count-2)*Init->dofN + word_count-1]));
-                                    break;
-                            }
+                            word_count ++;
                         }
 
-                        word_count ++;
-                    }
-
-                    else if ( !isspace(temp_str[i]) && !word_find ) {
-                        word_find  = true;
-                        word_begin = i;
+                        else if ( !isspace(temp_str[i]) && !word_find ) {
+                            word_find  = true;
+                            word_begin = i;
+                        }
                     }
                 }
-            }
 
-            if (show_tag && (line_count == Init->nodeN + 2) ) printf("Read order %d initial data end.\n", Init->order);
-        }
+                if (show_tag && (line_count == Coor->nodeN + 2) ) printf("Read coor end.\n");
+            } break;
 
-        else if (dataparagh == mate) {
+            case mesh: {
 
-            if (line_count == 1) {
-                if ( assign_mesh_type(temp_str, E_ID->type, E_ID->typeN-1) == 1)
-                    return;
-            }
+                if (line_count == 1) {
+                    if ( assign_mesh_type(temp_str, Mesh->type, Mesh->typeN-1) )
+                        return;
+                    assign_local_dim(Mesh->type[Mesh->typeN-1], &(Mesh->l_dim[Mesh->typeN-1]));
+                }
 
-            else if (line_count == 2) {
+                else if (line_count == 2) {
 
-                sscanf(temp_str, "%d", &(E_ID->elemN[E_ID->typeN-1]));
+                    sscanf(temp_str, "%d %d", &(Mesh->scale[Mesh->typeN-1]),
+                                              &(Mesh->nodeN[Mesh->typeN-1]));
 
-                E_ID->elemID[E_ID->typeN-1] = (int*)malloc(sizeof(int)*E_ID->elemN[E_ID->typeN-1]);
-                E_ID->elemSN[E_ID->typeN-1] = (int*)malloc(sizeof(int)*E_ID->elemN[E_ID->typeN-1]);
-            }
+                    Mesh->topo[Mesh->typeN-1]  = (int*)malloc(sizeof(int)*
+                                               Mesh->scale[Mesh->typeN-1]*
+                                               Mesh->nodeN[Mesh->typeN-1]);
+                }
 
-            else if (line_count < E_ID->elemN[E_ID->typeN-1] + 3) {
-                sscanf(temp_str, "%d %d", &E_ID->elemSN[E_ID->typeN-1][line_count-3] ,
-                                          &E_ID->elemID[E_ID->typeN-1][line_count-3]);
-            }
+                else if (line_count < Mesh->scale[Mesh->typeN-1] + 3) {
 
-            if (show_tag && (line_count == E_ID->elemN[E_ID->typeN-1] + 3) ) printf("Read mesh material tag end.\n");
+                    int  word_count = 0;
+                    int  word_begin = 0;
+                    bool word_find  = true;
+
+                    for (int i=0; temp_str[i] != '\0'; i++) {
+
+                        if ( isspace(temp_str[i]) && word_find ) {
+
+                            word_find = false;
+                            temp_str[i] = '\0';
+
+                            sscanf(temp_str + word_begin, "%d",
+                                 &(Mesh->topo[Mesh->typeN-1][(line_count-3)*Mesh->nodeN[Mesh->typeN-1] + word_count]) );
+
+                            word_count ++;
+                        }
+
+                        else if ( !isspace(temp_str[i]) && !word_find ) {
+                            word_find  = true;
+                            word_begin = i;
+                        }
+                    }
+                }
+
+                if (show_tag && (line_count == Mesh->scale[Mesh->typeN-1] + 3) ) printf("Read mesh end.\n");
+            } break;
+
+            case id: {
+
+                if (line_count == 1) {
+
+                    sscanf(temp_str, "%d %d", &(ID->nodeN), &(ID->dofN));
+
+                    ID->nodeSN = (int*   )malloc(ID->nodeN * sizeof(int));
+                    ID->dofID  = (int*   )malloc(ID->nodeN * ID->dofN * sizeof(int));
+                    ID->dofval = (double*)malloc(ID->nodeN * ID->dofN * sizeof(double));
+                }
+                else if (line_count < ID->nodeN + 2) {
+
+                    int  word_count = 0;
+                    int  word_begin = 0;
+                    bool word_find  = true;
+
+                    for (int i=0; temp_str[i] != '\0'; i++) {
+
+                        if ( isspace(temp_str[i]) && word_find ) {
+
+                            word_find = false;
+                            temp_str[i] = '\0';
+
+                            if (word_count == 0)
+                                sscanf(temp_str + word_begin, "%d", &(ID->nodeSN[line_count-2]));
+
+                            else
+                                sscanf(temp_str + word_begin, "%d",
+                                     &(ID->dofID[(line_count-2)*ID->dofN + word_count-1]));
+
+                            word_count ++;
+                        }
+
+                        else if ( !isspace(temp_str[i]) && !word_find ) {
+                            word_find  = true;
+                            word_begin = i;
+                        }
+                    }
+                }
+            } break;
+
+            case value: {
+
+                if (line_count == 1) {
+                    continue;
+                }
+
+                else if (line_count < ID->nodeN + 2) {
+
+                    int  word_count = 0;
+                    int  word_begin = 0;
+                    bool word_find  = true;
+
+                    for (int i=0; temp_str[i] != '\0'; i++) {
+
+                        if ( isspace(temp_str[i]) && word_find ) {
+
+                            word_find = false;
+                            temp_str[i] = '\0';
+
+                            if (word_count != 0)
+                                sscanf(temp_str + word_begin, "%lg",
+                                     &(ID->dofval[(line_count-2)*ID->dofN + word_count-1]));
+
+                            word_count ++;
+                        }
+
+                        else if ( !isspace(temp_str[i]) && !word_find ) {
+                            word_find  = true;
+                            word_begin = i;
+                        }
+                    }
+                }
+
+                if (show_tag && (line_count == ID->nodeN + 2) ) printf("Read constraint end.\n");
+            } break;
+
+            case init: {
+
+                if (line_count == 1) {
+
+                    switch(Init->order) {
+                        case 1:
+                            sscanf(temp_str, "%d %d", &Init->nodeN, &Init->dofN);
+                            Init->init_0 = (double*)malloc(Init->nodeN*Init->dofN*sizeof(double));
+                            break;
+                        case 2:
+                            Init->init_1 = (double*)malloc(Init->nodeN*Init->dofN*sizeof(double));
+                            break;
+                        case 3:
+                            Init->init_2 = (double*)malloc(Init->nodeN*Init->dofN*sizeof(double));
+                            break;
+                    }
+
+                }
+
+                else if (line_count < Init->nodeN + 2) {
+
+                    int  word_count = 0;
+                    int  word_begin = 0;
+                    bool word_find  = true;
+
+                    for (int i=0; temp_str[i] != '\0'; i++) {
+
+                        if ( isspace(temp_str[i]) && word_find ) {
+
+                            word_find = false;
+                            temp_str[i] = '\0';
+
+                            if (word_count != 0) {
+
+                                switch(Init->order) {
+                                    case 0:
+                                        sscanf(temp_str + word_begin, "%lg",
+                                             &(Init->init_0[(line_count-2)*Init->dofN + word_count-1]));
+                                        break;
+                                    case 1:
+                                        sscanf(temp_str + word_begin, "%lg",
+                                             &(Init->init_1[(line_count-2)*Init->dofN + word_count-1]));
+                                        break;
+                                    case 2:
+                                        sscanf(temp_str + word_begin, "%lg",
+                                             &(Init->init_2[(line_count-2)*Init->dofN + word_count-1]));
+                                        break;
+                                }
+                            }
+
+                            word_count ++;
+                        }
+
+                        else if ( !isspace(temp_str[i]) && !word_find ) {
+                            word_find  = true;
+                            word_begin = i;
+                        }
+                    }
+                }
+
+                if (show_tag && (line_count == Init->nodeN + 2) ) printf("Read order %d initial data end.\n", Init->order);
+            } break;
+
+            case mate: {
+
+                if (line_count == 1) {
+                    if ( assign_mesh_type(temp_str, E_ID->type, E_ID->typeN-1) == 1)
+                        return;
+                }
+
+                else if (line_count == 2) {
+
+                    sscanf(temp_str, "%d", &(E_ID->elemN[E_ID->typeN-1]));
+
+                    E_ID->elemID[E_ID->typeN-1] = (int*)malloc(sizeof(int)*E_ID->elemN[E_ID->typeN-1]);
+                    E_ID->elemSN[E_ID->typeN-1] = (int*)malloc(sizeof(int)*E_ID->elemN[E_ID->typeN-1]);
+                }
+
+                else if (line_count < E_ID->elemN[E_ID->typeN-1] + 3) {
+                    sscanf(temp_str, "%d %d", &E_ID->elemSN[E_ID->typeN-1][line_count-3] ,
+                                              &E_ID->elemID[E_ID->typeN-1][line_count-3]);
+                }
+
+                if (show_tag && (line_count == E_ID->elemN[E_ID->typeN-1] + 3) ) printf("Read mesh material tag end.\n");
+            } break;
+
+            default:
+                break;
         }
     }
     fclose(ReadData);

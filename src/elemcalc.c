@@ -36,7 +36,6 @@ void elemcalc (
 	static double jacb_matr[9];
 	static double invt_jacb[9];
 
-
     for (int gaus_i = 1; gaus_i <= G_info.gausN; gaus_i ++)
     {
         for (int i=1;i<=E_info.g_dim;i++)

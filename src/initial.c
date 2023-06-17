@@ -25,15 +25,12 @@ void initial(
     Equat_Set   *Equa
 ){
     int     node_dof =   Field->Res.dofN;
-    double *result   =   Field->Res.result;
     Dof_Tag   *ID    = &(Field->ID);
     Elem_Tag  *E_ID  = &(Field->E_ID);
     Mesh_Mate *Emate = &(Field->Emate);
 
     // ---------------------------------------- initial solution space ----------------------------------------
     Field->Res.result = (double *)calloc(Coor.nodeN*node_dof, sizeof(double));
-    
-    result = Field->Res.result;
     
     for (int i=0; i<ID->nodeN; i++) {
 
@@ -43,7 +40,7 @@ void initial(
 
             if (ID->dofID[i*ID->dofN + j] == -1 )
 
-                result[node_SN*ID->dofN + j] = ID->dofval[i*ID->dofN + j];
+                Field->Res.result[node_SN*ID->dofN + j] = ID->dofval[i*ID->dofN + j];
     }
 
     // ---------------------------------------- initial material space ---------------------------------------
@@ -216,7 +213,6 @@ void initial(
 
     printf("Initial done!\n");
 
-    result = NULL;
     ID     = NULL;
     E_ID   = NULL;
     Emate  = NULL;

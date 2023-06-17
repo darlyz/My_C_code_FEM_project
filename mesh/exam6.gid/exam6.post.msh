@@ -1,4 +1,4 @@
-Mesh "aeq4g2" Dimension 2 Elemtype Quadrilateral Nnode 4
+Mesh "ES - Q4" Dimension 2 Elemtype Quadrilateral Nnode 4
 Coordinates
 1 0.000000e+00 1.000000e+00
 2 1.000000e-01 1.000000e+00

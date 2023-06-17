@@ -14,7 +14,7 @@
 #include "clear_data.h"
 #include "write_resault.h"
 #include "check_and_show.h"
-//#include "write_mesh.h"
+//#include "export_mesh.h"
 
 int main(int argc, char* argv[])
 {
@@ -35,8 +35,6 @@ int main(int argc, char* argv[])
     //Field_info *Field = (Field_info*)malloc(5*sizeof(Field_info));
     Field_info Field[5];
 
-    Equat_Set Equa;
-
     int field_SN = 0;
 
     readmesh( &Coor, &Mesh, Field, &field_SN, data_file );
@@ -50,24 +48,26 @@ int main(int argc, char* argv[])
     //for (int i=0; i<field_SN; i++) show_elem_tag(Field[i].E_ID);
     //Mesh.typeN = 1;
 
+    Equat_Set Equa;
+
     Field_info *Field_A = (Field + 0);
     Field_A->Res.nodeN = Coor.nodeN;
     Field_A->Res.dofN  = 1;
-
+    strcpy(Field_A->Tag, "ES");
+    strcpy(Field_A->Name, "ElectroStatic");
     initial ( Coor, Mesh, Field_A, &Equa );
 
     //for (int i=0; i<Coor.nodeN; i++) printf("%le\n",Field_A->Res.result[i]);
     //for (int i=0; i<field_SN; i++) show_mesh_mate(Field[i].Emate);
     
     matrix_compose( Coor, Mesh, Field_A, &Equa, 0 );
-
     matrsolv( &Equa );
-
     result_compose( Equa, *Field_A, Coor.nodeN );
-
-    write_result( Coor, Mesh, *Field_A, mesh_file, resl_file );
+    write_result( Coor, Mesh, *Field_A, mesh_file, resl_file, prj );
 
     clear_coor( &Coor );
     clear_mesh( &Mesh );
     clear_field( Field, field_SN );
+
+    return 1;
 }

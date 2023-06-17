@@ -87,7 +87,17 @@ typedef struct Result
     int dofN;                       //
     int nodeN;                      //
     double *result;                 //
+    char Name[64];
 }Result;
+
+typedef struct DerivatedResult
+{
+    int dofN;
+    int nodeN;
+    double *result;
+    char Name[64];
+}DerivatedResult;
+
 
 typedef struct Field_info
 {
@@ -97,6 +107,8 @@ typedef struct Field_info
     Elem_Tag  E_ID;
     Materail  Mate;
     Mesh_Mate Emate;
+    char Tag[8];     // Field tag(SN), like A, B and so on 
+    char Name[128];  // Field name, limit 128 charactors
 }Field_info;
 
 // ------------------
@@ -141,5 +153,12 @@ typedef struct Equation_Set
 	double **matrix;
     double  *vector;
 }Equat_Set;
+
+typedef struct Test_Function
+{
+    double *u, *ux, *uy, *uz, *real_shap;
+}Test_Func;
+
+//double cal_elm_stif();
 
 #endif

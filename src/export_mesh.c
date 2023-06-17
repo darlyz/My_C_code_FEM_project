@@ -6,7 +6,7 @@
  All rights reserved
 */
 
-#include "write_mesh.h"
+#include "export_mesh.h"
 
 void write_gmsh_mesh(
     Coor_Info   *Coor,
