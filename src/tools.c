@@ -179,7 +179,7 @@ void insert_node(int** dest, int* length, int init_length, int insert_SN) {
 
 // insert insert_SN into adj_topo[node_SN-1][] and adj_nodn[node_SN-1]++
 void insert_node_(int node_SN, int insert_SN, int* adj_nodn, int** adj_topo) {
-    
+
     node_SN --;
 
     if (adj_nodn[node_SN] == 0) {
@@ -194,8 +194,8 @@ void insert_node_(int node_SN, int insert_SN, int* adj_nodn, int** adj_topo) {
         if (insert_idx != -1) {
 
             if (adj_nodn[node_SN] % init_adj_num == 0)
-				adj_topo[node_SN] = (int*)realloc(adj_topo[node_SN], (adj_nodn[node_SN]/init_adj_num + 1)*init_adj_num * sizeof(int));
- 
+                adj_topo[node_SN] = (int*)realloc(adj_topo[node_SN], (adj_nodn[node_SN]/init_adj_num + 1)*init_adj_num * sizeof(int));
+
             memmove(adj_topo[node_SN] + insert_idx + 1, adj_topo[node_SN] + insert_idx, (adj_nodn[node_SN] - insert_idx) * sizeof(int));
             adj_topo[node_SN][insert_idx] = insert_SN;
             adj_nodn[node_SN] ++;

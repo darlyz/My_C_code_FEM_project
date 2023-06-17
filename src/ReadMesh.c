@@ -410,7 +410,7 @@ int assign_mesh_type(char* type_str, Mesh_Type *Mtype, int type_i) {
     else if (strncmp(type_str, "h18", 3) == 0)
         Mtype[type_i] = H18;
     */
-    
+
     char shap_type = type_str[0];
     int  shap_nodn;
     sscanf(type_str + 1, "%d", &shap_nodn);

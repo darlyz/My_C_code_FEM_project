@@ -14,10 +14,10 @@
 void elemcalc (
     int elem_n,
     Gaus_Info  G_info,
-	Elem_Info  E_info,
+    Elem_Info  E_info,
     Elem_Matr *E_matr,
-	Shap_Func  shap_func,
-	Test_Func  test_func
+    Shap_Func  shap_func,
+    Test_Func  test_func
 );
 
 #endif

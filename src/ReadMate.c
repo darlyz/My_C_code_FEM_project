@@ -7,7 +7,7 @@
 #include "fem.h"
 
 void readmate(Field_info *Field, int field_num, char* mat_file) {
-    
+
     FILE *ReadMate;
     if((ReadMate = fopen(mat_file,"r"))==NULL) {
         printf("Read materials failed!\n");

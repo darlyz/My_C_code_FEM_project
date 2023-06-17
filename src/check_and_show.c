@@ -8,13 +8,13 @@
 
 // used it in elemcalc.c
 void show_elem_stif(int nodeN, Elem_Matr E_matr) {
-	for (int i=0; i<nodeN*nodeN; i++)
-	    printf("%e\n",E_matr.matr_0[i]);
-    
-	for (int i=0; i<nodeN; i++)
-	    printf("%e\n",E_matr.righ_vect[i]);
+    for (int i=0; i<nodeN*nodeN; i++)
+        printf("%e\n",E_matr.matr_0[i]);
 
-	printf("\n");
+    for (int i=0; i<nodeN; i++)
+        printf("%e\n",E_matr.righ_vect[i]);
+
+    printf("\n");
 }
 
 // used it in initial.c
@@ -53,32 +53,32 @@ void show_elem(Elem_Info E_info, int elem_nodeN, int mate_varN, int gaus_num) {
 
     int dim = E_info.l_dim;
 
-	printf("dim: %d\n",E_info.l_dim);
-	printf("nodeN: %d\n",E_info.nodeN);
+    printf("dim: %d\n",E_info.l_dim);
+    printf("nodeN: %d\n",E_info.nodeN);
 
-	printf("topo:\n");
-	for (int i=0; i<elem_nodeN; i++)
-		printf("%d ",E_info.topo[i]);
-	printf("\n");
+    printf("topo:\n");
+    for (int i=0; i<elem_nodeN; i++)
+        printf("%d ",E_info.topo[i]);
+    printf("\n");
 
-	printf("coor:\n");
-	for (int i=0; i<E_info.nodeN; i++){
-		for (int j=0; j<dim; j++)
-			printf("%e ",E_info.coor[j*E_info.nodeN+i]);
-		printf("\n");
-	}
+    printf("coor:\n");
+    for (int i=0; i<E_info.nodeN; i++){
+        for (int j=0; j<dim; j++)
+            printf("%e ",E_info.coor[j*E_info.nodeN+i]);
+        printf("\n");
+    }
 
-	printf("mate:\n");
-	for (int i=0; i<mate_varN; i++)
-		printf("%e ",E_info.mate[i]);
-	printf("\n");
+    printf("mate:\n");
+    for (int i=0; i<mate_varN; i++)
+        printf("%e ",E_info.mate[i]);
+    printf("\n");
 
-	printf("refr:\n");
-	for (int i=0; i<gaus_num; i++){
-		for (int j=0; j<E_info.nodeN*(dim+1); j++)
-			printf("%e ",E_info.refr[i][j]);
-		printf("\n");
-	}
+    printf("refr:\n");
+    for (int i=0; i<gaus_num; i++){
+        for (int j=0; j<E_info.nodeN*(dim+1); j++)
+            printf("%e ",E_info.refr[i][j]);
+        printf("\n");
+    }
 }
 
 // used it in matrcalc.c

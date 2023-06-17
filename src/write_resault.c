@@ -49,7 +49,7 @@ void write_result(Coor_Info Coor, Node_Mesh Mesh, Field_info Field, char* mesh_f
 
         fprintf(WriteMesh,"Mesh \"%s\" Dimension %d Elemtype %s Nnode %d\n",
                           mesh_tag, Coor.dim, elem_type, Mesh.nodeN[type_i]);
-        
+
         if (type_i == 0) {
 
             fprintf(WriteMesh,"Coordinates\n");

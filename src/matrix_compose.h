@@ -14,7 +14,7 @@ void matrix_compose(
     Coor_Info  Coor,
     Node_Mesh  Mesh,
     Field_info *Field,
-	Equat_Set* Equa,
+    Equat_Set* Equa,
     int Field_i
 );
 
@@ -31,6 +31,5 @@ void clear_elem(Elem_Info *E_info, int gausN);
 void set_testfunc(Test_Func *test_func, int nodeN, int g_dim);
 
 void clear_testfunc(Test_Func *test_func);
-
 
 #endif

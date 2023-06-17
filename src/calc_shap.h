@@ -12,42 +12,42 @@
 
 // return *jacb_matr and |jacb_matr|
 double calc_jacobi(
-	double* node_coor,
-	double* refr_coor,
-	double* jacb_matr,
-	int dim,
-	int shap_nodn,
-	Type_Lagrange_Deriva_Shapfunc_Ptr lagrange_deriva_shapfunc_ptr
+    double* node_coor,
+    double* refr_coor,
+    double* jacb_matr,
+    int dim,
+    int shap_nodn,
+    Type_Lagrange_Deriva_Shapfunc_Ptr lagrange_deriva_shapfunc_ptr
 );
 
 // return *real_coor, *jacb_matr and |jacb_matr|
 double transe_coor(
-	double* real_coor,
-	double* refr_coor,
-	double* node_coor,
-	double* jacb_matr,
-	int dim,
-	int shap_nodn,
-	Shap_Func shap_func
+    double* real_coor,
+    double* refr_coor,
+    double* node_coor,
+    double* jacb_matr,
+    int dim,
+    int shap_nodn,
+    Shap_Func shap_func
 );
 
 // return *refr_shap
 void calc_refr_shap(
-	double* refr_shap,
-	double* refr_coor,
-	int node_cont,
-	int dim,
-	Shap_Func shap_func
+    double* refr_shap,
+    double* refr_coor,
+    int node_cont,
+    int dim,
+    Shap_Func shap_func
 );
 
 // return **refr_shap
 void set_refr_shap(
-	double** refr_shap,
-	double* gaus_coor,
-	int gaus_num,
-	int node_cont,
-	int dim,
-	Shap_Func shap_func
+    double** refr_shap,
+    double* gaus_coor,
+    int gaus_num,
+    int node_cont,
+    int dim,
+    Shap_Func shap_func
 );
 
 // return *real_shap

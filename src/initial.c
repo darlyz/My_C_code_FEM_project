@@ -31,7 +31,7 @@ void initial(
 
     // ---------------------------------------- initial solution space ----------------------------------------
     Field->Res.result = (double *)calloc(Coor.nodeN*node_dof, sizeof(double));
-    
+
     for (int i=0; i<ID->nodeN; i++) {
 
         int node_SN = ID->nodeSN[i] - 1;
@@ -62,7 +62,7 @@ void initial(
         for (int j = 0; j < E_ID->typeN; j++) {
 
             if (Mesh.type[i] == E_ID->type[j]) {
-                
+
                 for (int k = 0; k < E_ID->elemN[j]; k++)
                     Emate->elemID[i][E_ID->elemSN[j][k]-1] = E_ID->elemID[j][k];
 
@@ -80,7 +80,7 @@ void initial(
 
     adj_nodn = (int* )calloc(Coor.nodeN,sizeof(int));
     adj_topo = (int**)malloc(Coor.nodeN*sizeof(int*));
-    
+
     for (int i=0; i<Coor.nodeN; i++)
         adj_topo[i] = (int*)malloc(init_adj_num*sizeof(int));
 
@@ -142,7 +142,7 @@ void initial(
     Equa->equaN = equation_index;
     //show_node_eq_index(*Equa, Coor.nodeN, node_dof);
     //printf("equation_index = %d\n",equation_index);
-    
+
     Equa->row_nZN = (int* )malloc(Equa->equaN * sizeof(int));
     Equa->clm_idx = (int**)malloc(Equa->equaN * sizeof(int*));
     Equa->matrix  = (double**)malloc(Equa->equaN * sizeof(double*));
@@ -158,7 +158,6 @@ void initial(
                 Equa->matrix [row_index-1] = (double*)malloc((adj_nodn[i]+1)*node_dof * sizeof(double));
             }
         }
-
 
     // --------------------------------------- convert graph to matrix ---------------------------------------
     Equa->nZeroN = 0;
@@ -177,7 +176,7 @@ void initial(
 
                     if (clm_index >0)
                         Equa->clm_idx[row_index-1][non_trivial++] = clm_index;
-                    
+
                     else
                         continue;
                 }
@@ -198,7 +197,7 @@ void initial(
 
             else
                 continue;
-            
+
             Equa->row_nZN[row_index-1] = non_trivial;
             Equa->nZeroN += non_trivial;
         }

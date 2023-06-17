@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     //char msh_file[255]; strcpy(msh_file, "./mesh/"); strcat(msh_file, prj);
     //write_gmsh_mesh( &Coor, &Mesh, &(Field[0].E_ID), msh_file);
     readmate( Field, field_SN, mate_file );
-    
+
     //show_coor(Coor);
     //show_mesh(Mesh);
     //show_material(Field, field_SN);
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
     //for (int i=0; i<Coor.nodeN; i++) printf("%le\n",Field_A->Res.result[i]);
     //for (int i=0; i<field_SN; i++) show_mesh_mate(Field[i].Emate);
-    
+
     matrix_compose( Coor, Mesh, Field_A, &Equa, 0 );
     matrsolv( &Equa );
     result_compose( Equa, *Field_A, Coor.nodeN );

@@ -26,7 +26,7 @@ void matrsolv(Equat_Set* Equa) {
 
         if (eq_i==0)
             bindx[0] = equaN + 1;
-        
+
         else {
             nontrivial_count += row_nZN[eq_i-1] - 1;
             bindx[eq_i] = nontrivial_count + bindx[0];
@@ -80,7 +80,6 @@ void matrsolv(Equat_Set* Equa) {
     noptions[AZ_poly_ord ] = 7 ;
     noptions[AZ_scaling  ] = AZ_none ;
     noptions[AZ_output   ] = 1 ;
-
 
     //----------------------------------------------------------------
 

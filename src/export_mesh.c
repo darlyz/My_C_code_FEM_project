@@ -52,7 +52,7 @@ void write_gmsh_mesh(
     int elem_idx = 0;
     for (int i = 0; i < Mesh->typeN; i ++)
         elem_idx += Mesh->scale[i];
-    
+
     fprintf(WriteMesh, "%d\n", elem_idx + 1);
 
     elem_idx = 0;
@@ -83,14 +83,14 @@ void write_gmsh_mesh(
         }
 
         for (int j = 0; j < Mesh->scale[i]; j ++){
-            
+
             elem_idx ++;
 
             fprintf(WriteMesh, "%d %d 2 %d %d", elem_idx, gmsh_elem_type, E_ID->elemID[i][j], E_ID->elemID[i][j]);
 
             for (int k = 0; k < Mesh->nodeN[i]; k ++)
                 fprintf(WriteMesh, " %d", Mesh->topo[i][j * Mesh->nodeN[i] + k]);
-            
+
             fprintf(WriteMesh, "\n");
 
         }

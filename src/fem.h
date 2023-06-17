@@ -31,7 +31,7 @@ typedef struct Coor_Info
 
 typedef struct Node_Mesh
 {
-	int   typeN;                    // type count
+    int   typeN;                    // type count
     int  *l_dim;                    // element local dim of each type               [type_i] = <local dim>
     int  *nodeN;                    // element nodes count of each type             [type_i] = <nodes count>
     int  *scale;                    // element count of each type                   [type_i] = <elems count>
@@ -70,9 +70,9 @@ typedef struct Elem_Tag
 
 typedef struct Materail
 {
-	int mateN;                      // material count
+    int mateN;                      // material count
     int varN;                       // material parameter count
-	double* mate;                   // materail parameter values                    [mate_i*mate_cont + para_i] = <mate parameter value>
+    double* mate;                   // materail parameter values                    [mate_i*mate_cont + para_i] = <mate parameter value>
 }Materail;
 
 typedef struct Mesh_Mate
@@ -136,7 +136,7 @@ typedef struct Elem_Info
     int  g_dim;         // element global dimension
     int  nodeN;         // element node count
     int  elemID;        // element material S.N.
-	int *topo;          // element nodes S.N.
+    int *topo;          // element nodes S.N.
     double  *coor;      // element nodes coordinates
     double  *coup;      // element XX coupled value
     double  *mate;      // element materail parameter values
@@ -145,12 +145,12 @@ typedef struct Elem_Info
 
 typedef struct Equation_Set
 {
-	int   equaN;        // total number of equations
+    int   equaN;        // total number of equations
     int   nZeroN;       // total number of non-trivials
     int  *row_nZN;      // counts of non-trivials per row        [eq   S.N.]           = <count>
     int **clm_idx;      // non-trivials column index per row     [eq   S.N.][index]    = <clm S.N.>
     int **dof_idx;      // equations S.N. of dofs on every node  [node S.N.][dof S.N.] = <eq  S.N.>
-	double **matrix;
+    double **matrix;
     double  *vector;
 }Equat_Set;
 
