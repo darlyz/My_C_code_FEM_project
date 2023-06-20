@@ -8,9 +8,6 @@
 
 void write_result(Coor_Info Coor, Node_Mesh Mesh, Field_info Field, char* mesh_file, char* resl_file, char* prj_name) {
 
-    double *result  = Field.Res.result;
-    int     dof_num = Field.Res.dofN;
-
     FILE *WriteMesh;
     if((WriteMesh = fopen(mesh_file, "w")) == NULL) {
         printf("Write mesh failed!\n");
@@ -94,6 +91,9 @@ void write_result(Coor_Info Coor, Node_Mesh Mesh, Field_info Field, char* mesh_f
 
     char var_type[255];
 
+    double *result  = Field.Res.result;
+    int     dof_num = Field.Res.dofN;
+
     if (dof_num == 1)
         strcpy(var_type, "Scalar");
 
@@ -103,6 +103,33 @@ void write_result(Coor_Info Coor, Node_Mesh Mesh, Field_info Field, char* mesh_f
     fprintf(WriteMesh, "Result \"%s\" \"Load Analysis\"  %d %s OnNodes\n", prj_name, dof_num, var_type);
 
     fprintf(WriteMesh, "ComponentNames \"u\"\n");
+
+    fprintf(WriteMesh, "Values\n");
+
+    for (int i = 0; i <Coor.nodeN; i++) {
+
+        fprintf(WriteMesh, "%d", i+1);
+
+        for (int j = 0; j <dof_num; j++)
+            fprintf(WriteMesh," %le", result[i*dof_num+j]);
+
+        fprintf(WriteMesh, "\n");
+    }
+
+    fprintf(WriteMesh, "End Values\n");
+
+    result = Field.Deriv_Res.result;
+    dof_num = Field.Deriv_Res.dofN;
+
+    if (dof_num == 1)
+        strcpy(var_type, "Scalar");
+
+    else
+        strcpy(var_type, "Vector");
+
+    fprintf(WriteMesh, "Result \"%s-derive\" \"Load Analysis\" 1 %s OnNodes\n", prj_name, var_type);
+
+    fprintf(WriteMesh, "ComponentNames \"ux\" \"uy\"\n");
 
     fprintf(WriteMesh, "Values\n");
 

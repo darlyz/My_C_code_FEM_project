@@ -35,10 +35,10 @@ void matrix_compose(
         Matr_Type M_type[4]={dist,lump,lump,lump};
 
         Gaus_Info G_info;
-        set_gaus(&G_info, Mesh.type[type_i-1]);
+        set_gaus(&G_info, Mesh.type[type_i-1], 2);
 
         Elem_Info E_info;
-        set_elem(&E_info, Coor.dim, elem_nodeN, Mate->varN, G_info.gausN);
+        set_elem(&E_info, Coor.dim, elem_nodeN, Mate->varN, G_info.gausN, NULL);
 
         Elem_Matr E_matr;
         set_matr(&E_matr, ematr_size, M_type);
@@ -209,18 +209,22 @@ void clear_matr(Elem_Matr* E_matr)
     free(E_matr->righ_vect); E_matr->righ_vect = NULL;
 }
 
-void set_elem(Elem_Info *E_info, int dim, int elem_nodeN, int varN, int gausN)
+void set_elem(Elem_Info *E_info, int dim, int elem_nodeN, int varN, int gausN, Result* res)
 {
     E_info->g_dim = dim;
     E_info->nodeN = elem_nodeN;
 
     E_info->topo = (int*    )malloc(E_info->nodeN * sizeof(int));
     E_info->coor = (double* )malloc(E_info->nodeN * E_info->g_dim * sizeof(double));
-    //E_info->coup = (double*)malloc(E_info->nodeN * coupN * sizeof(double));
     E_info->mate = (double* )malloc(varN  * sizeof(double));
     E_info->refr = (double**)malloc(gausN * sizeof(double*));
     for (int gaus_i=1; gaus_i<=gausN; gaus_i++)
         E_info->refr[gaus_i-1] = (double*)malloc(E_info->nodeN * (E_info->g_dim+1) * sizeof(double));
+    
+    if (res != NULL){
+        E_info->coup_dofN = res->dofN;
+        E_info->coup = (double*)malloc(E_info->nodeN * E_info->coup_dofN * sizeof(double));
+    }
 }
 
 void clear_elem(Elem_Info *E_info, int gausN)

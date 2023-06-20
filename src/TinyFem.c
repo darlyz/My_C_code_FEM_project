@@ -13,16 +13,16 @@
 #include "resault_compose.h"
 #include "clear_data.h"
 #include "write_resault.h"
-#include "check_and_show.h"
+//#include "check_and_show.h"
 //#include "export_mesh.h"
 
 int main(int argc, char* argv[])
 {
     char *prj = argv[1];
-    char data_file[255]; strcpy(data_file, "./mesh/"); strcat(data_file, prj); strcat(data_file, ".gid/"); strcat(data_file, prj); strcat(data_file, ".dat");
-    char mate_file[255]; strcpy(mate_file, "./mate/"); strcat(mate_file, prj); strcat(mate_file, ".mat");
-    char mesh_file[255]; strcpy(mesh_file, "./mesh/"); strcat(mesh_file, prj); strcat(mesh_file, ".gid/"); strcat(mesh_file, prj); strcat(mesh_file, ".post.msh");
-    char resl_file[255]; strcpy(resl_file, "./mesh/"); strcat(resl_file, prj); strcat(resl_file, ".gid/"); strcat(resl_file, prj); strcat(resl_file, ".post.res");
+    char data_file[255]; strcpy(data_file, "/mnt/d/Allo_Test/test.fem/My_C_code_FEM_project/mesh/"); strcat(data_file, prj); strcat(data_file, ".gid/"); strcat(data_file, prj); strcat(data_file, ".dat");
+    char mate_file[255]; strcpy(mate_file, "/mnt/d/Allo_Test/test.fem/My_C_code_FEM_project/mate/"); strcat(mate_file, prj); strcat(mate_file, ".mat");
+    char mesh_file[255]; strcpy(mesh_file, "/mnt/d/Allo_Test/test.fem/My_C_code_FEM_project/mesh/"); strcat(mesh_file, prj); strcat(mesh_file, ".gid/"); strcat(mesh_file, prj); strcat(mesh_file, ".post.msh");
+    char resl_file[255]; strcpy(resl_file, "/mnt/d/Allo_Test/test.fem/My_C_code_FEM_project/mesh/"); strcat(resl_file, prj); strcat(resl_file, ".gid/"); strcat(resl_file, prj); strcat(resl_file, ".post.res");
 
     //char data_file[]="./mesh/exam2.gid/exam2.dat";
     //char mate_file[]="./mate/exam2.mat";
@@ -62,7 +62,8 @@ int main(int argc, char* argv[])
 
     matrix_compose( Coor, Mesh, Field_A, &Equa, 0 );
     matrsolv( &Equa );
-    result_compose( Equa, *Field_A, Coor.nodeN );
+    response_result( Equa, Field_A, Coor.nodeN );
+    derivate_result( Field_A, Coor, Mesh);
     write_result( Coor, Mesh, *Field_A, mesh_file, resl_file, prj );
 
     clear_coor( &Coor );

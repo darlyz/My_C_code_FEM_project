@@ -43,8 +43,8 @@ typedef struct Node_Mesh
 typedef struct Dof_Tag
 {
     int     dofN;                   // dof number a node has
-    int     nodeN;                  // total number of nodes has constraint dof
-    int    *nodeSN;                 // S.N. of nodes has constraint dof             [index]    = <node S.N.>
+    int     nodeN;                  // total number of nodes has constrained dof
+    int    *nodeSN;                 // S.N. of nodes has constrained dof            [index]    = <node S.N.>
     int    *dofID;                  // ID of dof                                    [i*dofn+j] = <ID S.N.  >
     double *dofval;                 // value of dof                                 [i*dofn+j] = <ID value >
 }Dof_Tag;
@@ -90,13 +90,14 @@ typedef struct Result
     char Name[64];
 }Result;
 
-typedef struct DerivatedResult
+typedef struct Derivative_Resault
 {
     int dofN;
     int nodeN;
     double *result;
+    int *accum;
     char Name[64];
-}DerivatedResult;
+}Derivative_Resault;
 
 
 typedef struct Field_info
@@ -107,6 +108,7 @@ typedef struct Field_info
     Elem_Tag  E_ID;
     Materail  Mate;
     Mesh_Mate Emate;
+    Derivative_Resault Deriv_Res;
     char Tag[8];     // Field tag(SN), like A, B and so on 
     char Name[128];  // Field name, limit 128 charactors
 }Field_info;
@@ -136,9 +138,10 @@ typedef struct Elem_Info
     int  g_dim;         // element global dimension
     int  nodeN;         // element node count
     int  elemID;        // element material S.N.
-    int *topo;          // element nodes S.N.
-    double  *coor;      // element nodes coordinates
-    double  *coup;      // element XX coupled value
+    int *topo;          // element nodes S.N. connection
+    int  coup_dofN;     // element XX coupled dof count
+    double  *coor;      // element nodes coordinates, size = nodeN * g_dim
+    double  *coup;      // element XX coupled value, size = nodeN * coup_dofN
     double  *mate;      // element materail parameter values
     double **refr;      // element materail reference shape values
 }Elem_Info;

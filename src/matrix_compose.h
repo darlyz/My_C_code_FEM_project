@@ -24,7 +24,7 @@ void reset_matr(Elem_Matr* E_matr, int elem_dof, const Matr_Type *M_type);
 
 void clear_matr(Elem_Matr* E_matr);
 
-void set_elem(Elem_Info *E_info, int dim, int elem_nodeN, int varN, int gausN);
+void set_elem(Elem_Info *E_info, int dim, int elem_nodeN, int varN, int gausN, Result* res);
 
 void clear_elem(Elem_Info *E_info, int gausN);
 

@@ -10,14 +10,6 @@
 
 #include "fem.h"
 
-void set_gaus_t3(Gaus_Info* G_info);
-
-void set_gaus_q4(Gaus_Info* G_info);
-
-void set_gaus_w4(Gaus_Info* G_info);
-
-void set_gaus_c8(Gaus_Info* G_info);
-
-void set_gaus(Gaus_Info* G_info, Mesh_Type MType);
+void set_gaus(Gaus_Info* G_info, Mesh_Type MType, int order);
 
 #endif

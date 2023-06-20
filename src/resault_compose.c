@@ -5,17 +5,16 @@
  All rights reserved
 */
 #include "fem.h"
-#include "shap_func.h"
 #include "gaussain.h"
 #include "resault_compose.h"
 #include "matrix_compose.h"
 #include "calc_shap.h"
 #include "tools.h"
 
-void result_compose( Equat_Set Equa, Field_info Field, int total_nodes ) {
+void response_result( Equat_Set Equa, Field_info* Field, int total_nodes ) {
 
-    double *result  = Field.Res.result;
-    int     dof_num = Field.Res.dofN;
+    double *result  = Field->Res.result;
+    int     dof_num = Field->Res.dofN;
 
     for (int i=0; i<total_nodes; i++) {
 
@@ -31,37 +30,26 @@ void result_compose( Equat_Set Equa, Field_info Field, int total_nodes ) {
     printf("result composed done!\n");
 }
 
-void deriv_elem_calc(int elem_i, Gaus_Info G_info, Elem_Info E_info,
-                     Deriv_Res* deriv_res, Shap_Func shap_func, Test_Func test_func);
+void derivate_result(Field_info* Field, Coor_Info Coor, Node_Mesh Mesh) {
 
-void set_elem_coup(Elem_Info* E_info_p, Result resault)
-{
+    Field->Deriv_Res.dofN = Coor.dim;
+    Field->Deriv_Res.nodeN = Coor.nodeN;
+    Field->Deriv_Res.result = (double*)calloc(Field->Deriv_Res.nodeN*Field->Deriv_Res.dofN, sizeof(double));
+    Field->Deriv_Res.accum  = (int*   )calloc(Field->Deriv_Res.nodeN, sizeof(int));
 
-}
+    Materail  *Mate  = &(Field->Mate);
+    Mesh_Mate *Emate = &(Field->Emate);
 
-void derivate_result(Field_info Field, Coor_Info Coor, Node_Mesh Mesh) {
-
-    Deriv_Res deriv_res;
-
-    deriv_res.dofN = Coor.dim;
-    deriv_res.nodeN = Coor.nodeN;
-    deriv_res.result = (double*)calloc(deriv_res.nodeN*deriv_res.dofN, sizeof(double));
-    deriv_res.accum  = (int*   )calloc(deriv_res.nodeN, sizeof(int));
-
-    Materail  *Mate  = &(Field.Mate);
-    Mesh_Mate *Emate = &(Field.Emate);
-
-    for (int type_i=1; type_i<=Mesh.typeN; type_i++)
+    for (int type_i = 1; type_i <= Mesh.typeN; type_i ++)
     {
         int elem_nodeN = Mesh.nodeN[type_i-1];
         int mesh_scale = Mesh.scale[type_i-1];
 
         Gaus_Info G_info;
-        set_gaus(&G_info, Mesh.type[type_i-1]);
+        set_gaus(&G_info, Mesh.type[type_i-1], 0);
 
         Elem_Info E_info;
-        set_elem(&E_info, Coor.dim, elem_nodeN, Mate->varN, G_info.gausN);
-        set_elem_coup(&E_info, Field.Res);
+        set_elem(&E_info, Coor.dim, elem_nodeN, Mate->varN, G_info.gausN, &(Field->Res));
 
         Shap_Func shap_func = get_shap_func(Mesh.type[type_i-1]);
 
@@ -87,14 +75,23 @@ void derivate_result(Field_info Field, Coor_Info Coor, Node_Mesh Mesh) {
                    Mate->varN*sizeof(double));
 
             for (int node_i=1; node_i<=elem_nodeN; node_i++) {
-                for (int dim_i=1; dim_i<=E_info.g_dim; dim_i++)
 
+                for (int dim_i=1; dim_i<=E_info.g_dim; dim_i++)
                     E_info.coor[(dim_i-1)*elem_nodeN + node_i-1] = 
                     Coor.coor[(E_info.topo[node_i-1]-1)*E_info.g_dim + dim_i-1];
+
+                for (int dof_i=1; dof_i<=E_info.coup_dofN; dof_i++)
+                    E_info.coup[(dof_i-1)*elem_nodeN + node_i-1] =
+                    Field->Res.result[(E_info.topo[node_i-1]-1)*E_info.coup_dofN + dof_i-1];
             }
 
-            deriv_elem_calc(elem_i, G_info, E_info, &deriv_res, shap_func, test_func);
+            deriv_elem_calc(elem_i, G_info, E_info, &(Field->Deriv_Res), shap_func, test_func);
         }
+    }
+
+    for (int node_i = 1; node_i <= Field->Deriv_Res.nodeN; node_i ++){
+        for (int dof_i = 1; dof_i <= Field->Deriv_Res.dofN; dof_i ++)
+            Field->Deriv_Res.result[(node_i-1)*Field->Deriv_Res.dofN + dof_i-1] /= Field->Deriv_Res.accum[node_i-1];
     }
 }
 
@@ -102,7 +99,7 @@ void deriv_elem_calc(
     int elem_i,
     Gaus_Info  G_info,
     Elem_Info  E_info,
-    Deriv_Res* deriv_res,
+    Derivative_Resault* deriv_res,
     Shap_Func  shap_func,
     Test_Func  test_func
 ){
@@ -124,36 +121,8 @@ void deriv_elem_calc(
     static double jacb_matr[9];
     static double invt_jacb[9];
 
-    for (int gaus_i = 1; gaus_i <= G_info.gausN; gaus_i ++)
-    {
-        for (int i=1;i<=E_info.g_dim;i++)
-        {
-            refr_coor[i-1] = G_info.gcoor[(i-1)*G_info.gausN + gaus_i-1];
-            real_coor[i-1] = 0.;
-            for (int j=1;j<=E_info.g_dim;j++)
-                jacb_matr[(i-1)*E_info.g_dim+j-1]=0.;
-        }
-
-        double det = transe_coor(real_coor, refr_coor, E_info.coor, jacb_matr, E_info.g_dim, E_info.nodeN, shap_func);
-
-        double invt_det = inv(invt_jacb, jacb_matr, E_info.g_dim);
-
-        x  = real_coor[0];
-        y  = real_coor[1];
-
-        rx = refr_coor[0];
-        ry = refr_coor[1];
-
-        double weight = det*G_info.gweig[gaus_i-1];
-        calc_real_shap(E_info.g_dim, E_info.nodeN, E_info.refr[gaus_i-1], real_shap, invt_jacb);
-
-        for (int i=1; i<=E_info.nodeN; ++i)
-            u[i-1]  = +real_shap[(i-1)*(E_info.g_dim+1)+1-1];
-
-        for (int i=1; i<=E_info.nodeN; ++i)
-            ux[i-1] = +real_shap[(i-1)*(E_info.g_dim+1)+2-1];
-
-        for (int i=1; i<=E_info.nodeN; ++i)
-            uy[i-1] = +real_shap[(i-1)*(E_info.g_dim+1)+3-1];
+    for (int node_i = 1; node_i < E_info.nodeN; node_i ++){
+        
     }
+
 }

@@ -85,7 +85,7 @@ void elemcalc (
         //    }
 
         // loadvector calculation
-        for (int i=1; i<=E_info.nodeN; ++i)
+        for (int i = 1; i <= E_info.nodeN; ++ i)
         {
             tempvar = u[i-1]*rho;
             E_matr->righ_vect[i-1] += tempvar*weight;
