@@ -10,6 +10,6 @@
 
 #include "fem.h"
 
-void matrsolv(Equat_Set* Equa);
+void matrsolv(Equat_Set* Equa_ptr);
 
 #endif

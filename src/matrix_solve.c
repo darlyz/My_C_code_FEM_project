@@ -7,15 +7,15 @@
 #include "fem.h"
 #include "az_aztec.h"
 
-void matrsolv(Equat_Set* Equa) {
+void matrsolv(Equat_Set* Equa_ptr) {
 
     //AZ_set_proc_config(AZ_set_proc_config, AZ_NOT_MPI);
 
-    int nZeroN    = Equa->nZeroN;
-    int equaN     = Equa->equaN;
-    int *row_nZN  = Equa->row_nZN;
-    int **clm_idx = Equa->clm_idx;
-    double **matrix = Equa->matrix;
+    int nZeroN    = Equa_ptr->nZeroN;
+    int equaN     = Equa_ptr->equaN;
+    int *row_nZN  = Equa_ptr->row_nZN;
+    int **clm_idx = Equa_ptr->clm_idx;
+    double **matrix = Equa_ptr->matrix;
 
     int    *bindx = (int   *)calloc(nZeroN+1, sizeof(int));
     double *val   = (double*)calloc(nZeroN+1, sizeof(double));
@@ -62,8 +62,8 @@ void matrsolv(Equat_Set* Equa) {
     //double *b=(double *) calloc(N_update,sizeof(double));
     double *x=(double *) calloc(N_update,sizeof(double));
 
-    //memcpy(b, Equa->vector, N_update*sizeof(double));
-    double *b = Equa->vector;
+    //memcpy(b, Equa_ptr->vector, N_update*sizeof(double));
+    double *b = Equa_ptr->vector;
 
     int  noptions[AZ_OPTIONS_SIZE];
     double params[AZ_PARAMS_SIZE];
@@ -106,7 +106,7 @@ void matrsolv(Equat_Set* Equa) {
 
     AZ_invorder_vec(x,ndata_org,nupdate_index,0,b);
 
-    memcpy(Equa->vector, x, N_update*sizeof(double));
+    memcpy(Equa_ptr->vector, x, N_update*sizeof(double));
 
     if (!AZ_FALSE)
     {

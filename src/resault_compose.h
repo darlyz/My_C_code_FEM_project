@@ -11,11 +11,8 @@
 #include "fem.h"
 #include "shap_func.h"
 
-void response_result( Equat_Set Equa, Field_info* Field, int total_nodes );
+void response_result( Equat_Set Equa, Field_info* field_ptr, int total_nodes );
 
-void derivate_result(Field_info* Field, Coor_Info Coor, Node_Mesh Mesh);
-
-void deriv_elem_calc(int elem_i, Gaus_Info G_info, Elem_Info E_info,
-                     Derivative_Resault* deriv_res, Shap_Func shap_func, Test_Func test_func);
+void derivate_result(Field_info* field_ptr, Coor_Info Coor, Node_Mesh Mesh);
 
 #endif

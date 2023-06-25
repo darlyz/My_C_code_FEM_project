@@ -21,56 +21,56 @@ void free_adj(int total_nodes, int* adj_nodn, int** adj_topo) {
 void initial(
     Coor_Info   Coor,
     Node_Mesh   Mesh,
-    Field_info *Field,
-    Equat_Set   *Equa
+    Field_info *field_ptr,
+    Equat_Set  *Equa_ptr
 ){
-    int     node_dof =   Field->Res.dofN;
-    Dof_Tag   *ID    = &(Field->ID);
-    Elem_Tag  *E_ID  = &(Field->E_ID);
-    Mesh_Mate *Emate = &(Field->Emate);
+    int node_dof = field_ptr->Res.dofN;
+    Dof_Tag   *ID_ptr    = &(field_ptr->ID);
+    Elem_Tag  *E_ID_ptr  = &(field_ptr->E_ID);
+    Mesh_Mate *Emate_ptr = &(field_ptr->Emate);
 
     // ---------------------------------------- initial solution space ----------------------------------------
-    Field->Res.result = (double *)calloc(Coor.nodeN*node_dof, sizeof(double));
+    field_ptr->Res.result = (double *)calloc(Coor.nodeN*node_dof, sizeof(double));
 
-    for (int i=0; i<ID->nodeN; i++) {
+    for (int i=0; i<ID_ptr->nodeN; i++) {
 
-        int node_SN = ID->nodeSN[i] - 1;
+        int node_SN = ID_ptr->nodeSN[i] - 1;
 
-        for (int j=0; j<ID->dofN; j++)
+        for (int j=0; j<ID_ptr->dofN; j++)
 
-            if (ID->dofID[i*ID->dofN + j] == -1 )
+            if (ID_ptr->dofID[i*ID_ptr->dofN + j] == -1 )
 
-                Field->Res.result[node_SN*ID->dofN + j] = ID->dofval[i*ID->dofN + j];
+                field_ptr->Res.result[node_SN*ID_ptr->dofN + j] = ID_ptr->dofval[i*ID_ptr->dofN + j];
     }
 
     // ---------------------------------------- initial material space ---------------------------------------
-    Emate->typeN = Mesh.typeN;
+    Emate_ptr->typeN = Mesh.typeN;
 
-    Emate->scale  = (int* )malloc(Emate->typeN*sizeof(int));
+    Emate_ptr->scale  = (int* )malloc(Emate_ptr->typeN*sizeof(int));
 
-    memcpy(Emate->scale, Mesh.scale, Emate->typeN*sizeof(int));
+    memcpy(Emate_ptr->scale, Mesh.scale, Emate_ptr->typeN*sizeof(int));
 
-    Emate->elemID = (int**)malloc(Emate->typeN*sizeof(int*));
+    Emate_ptr->elemID = (int**)malloc(Emate_ptr->typeN*sizeof(int*));
 
-    for (int i = 0; i < Emate->typeN; i++)
-        Emate->elemID[i] = (int*)malloc(Emate->scale[i]*sizeof(int));
+    for (int i = 0; i < Emate_ptr->typeN; i++)
+        Emate_ptr->elemID[i] = (int*)malloc(Emate_ptr->scale[i]*sizeof(int));
 
     for (int i = 0; i < Mesh.typeN; i++) {
 
-        memset(Emate->elemID[i], 0, Emate->scale[i]*sizeof(int));
+        memset(Emate_ptr->elemID[i], 0, Emate_ptr->scale[i]*sizeof(int));
 
-        for (int j = 0; j < E_ID->typeN; j++) {
+        for (int j = 0; j < E_ID_ptr->typeN; j++) {
 
-            if (Mesh.type[i] == E_ID->type[j]) {
+            if (Mesh.type[i] == E_ID_ptr->type[j]) {
 
-                for (int k = 0; k < E_ID->elemN[j]; k++)
-                    Emate->elemID[i][E_ID->elemSN[j][k]-1] = E_ID->elemID[j][k];
+                for (int k = 0; k < E_ID_ptr->elemN[j]; k++)
+                    Emate_ptr->elemID[i][E_ID_ptr->elemSN[j][k]-1] = E_ID_ptr->elemID[j][k];
 
                 break;
             }
         }
     }
-    //show_mesh_mate(*Emate);
+    //show_mesh_mate(*Emate_ptr);
 
     // ---------------------------------------- convert mesh to graph ----------------------------------------
     int   nodeN;
@@ -113,69 +113,69 @@ void initial(
 
     // --------------------------------------- initial Equation Set ---------------------------------------
     //int constraint_count = 0;
-    //for (int i=0; i<ID->tag_nodn; i++)
-    //    for (int j=0; j<ID->dofN; j++)
-    //        if (ID->dofID[i*ID->dofN + j] <= 0)
+    //for (int i=0; i<ID_ptr->tag_nodn; i++)
+    //    for (int j=0; j<ID_ptr->dofN; j++)
+    //        if (ID_ptr->dofID[i*ID_ptr->dofN + j] <= 0)
     //            constraint_count ++ ;
 
-    //Equa->equaN = Coor.nodeN * node_dof - constraint_count;
+    //Equa_ptr->equaN = Coor.nodeN * node_dof - constraint_count;
     //printf("constraint_count = %d\n",constraint_count);
 
     int min_int32 = -2147483648;
 
-    Equa->dof_idx = (int**)malloc(Coor.nodeN * sizeof(int*));
+    Equa_ptr->dof_idx = (int**)malloc(Coor.nodeN * sizeof(int*));
     for (int i=0; i<Coor.nodeN; i++) {
-        Equa->dof_idx[i] = (int*)malloc(node_dof*sizeof(int));
-        memcpy(Equa->dof_idx[i], &min_int32, node_dof*sizeof(int));
+        Equa_ptr->dof_idx[i] = (int*)malloc(node_dof*sizeof(int));
+        memcpy(Equa_ptr->dof_idx[i], &min_int32, node_dof*sizeof(int));
     }
 
-    for (int i=0; i<ID->nodeN; i++) 
-        for (int j=0; j<ID->dofN; j++)
-            Equa->dof_idx[ID->nodeSN[i]-1][j] = ID->dofID[i*ID->dofN + j];
+    for (int i=0; i<ID_ptr->nodeN; i++) 
+        for (int j=0; j<ID_ptr->dofN; j++)
+            Equa_ptr->dof_idx[ID_ptr->nodeSN[i]-1][j] = ID_ptr->dofID[i*ID_ptr->dofN + j];
 
     int equation_index = 0;
     for (int i=0; i<Coor.nodeN; i++)
         for (int j=0; j<node_dof; j++)
-            if (Equa->dof_idx[i][j] == min_int32)
-                Equa->dof_idx[i][j] = (++equation_index);
+            if (Equa_ptr->dof_idx[i][j] == min_int32)
+                Equa_ptr->dof_idx[i][j] = (++equation_index);
 
-    Equa->equaN = equation_index;
-    //show_node_eq_index(*Equa, Coor.nodeN, node_dof);
+    Equa_ptr->equaN = equation_index;
+    //show_node_eq_index(*Equa_ptr, Coor.nodeN, node_dof);
     //printf("equation_index = %d\n",equation_index);
 
-    Equa->row_nZN = (int* )malloc(Equa->equaN * sizeof(int));
-    Equa->clm_idx = (int**)malloc(Equa->equaN * sizeof(int*));
-    Equa->matrix  = (double**)malloc(Equa->equaN * sizeof(double*));
-    Equa->vector  = (double* )calloc(Equa->equaN , sizeof(double));
+    Equa_ptr->row_nZN = (int* )malloc(Equa_ptr->equaN * sizeof(int));
+    Equa_ptr->clm_idx = (int**)malloc(Equa_ptr->equaN * sizeof(int*));
+    Equa_ptr->matrix  = (double**)malloc(Equa_ptr->equaN * sizeof(double*));
+    Equa_ptr->vector  = (double* )calloc(Equa_ptr->equaN , sizeof(double));
 
     for (int i=0; i<Coor.nodeN; i++)
         for (int j=0; j<node_dof; j++) {
 
-            int row_index   = Equa->dof_idx[i][j];
+            int row_index   = Equa_ptr->dof_idx[i][j];
 
             if (row_index > 0) {
-                Equa->clm_idx[row_index-1] = (int*   )malloc((adj_nodn[i]+1)*node_dof * sizeof(int));
-                Equa->matrix [row_index-1] = (double*)malloc((adj_nodn[i]+1)*node_dof * sizeof(double));
+                Equa_ptr->clm_idx[row_index-1] = (int*   )malloc((adj_nodn[i]+1)*node_dof * sizeof(int));
+                Equa_ptr->matrix [row_index-1] = (double*)malloc((adj_nodn[i]+1)*node_dof * sizeof(double));
             }
         }
 
     // --------------------------------------- convert graph to matrix ---------------------------------------
-    Equa->nZeroN = 0;
+    Equa_ptr->nZeroN = 0;
     for (int i=0; i<Coor.nodeN; i++)
 
         for (int j=0; j<node_dof; j++) {
 
             int non_trivial = 0;
-            int row_index   = Equa->dof_idx[i][j];
+            int row_index   = Equa_ptr->dof_idx[i][j];
 
             if (row_index > 0) {
 
                 for (int jj=0; jj<node_dof; jj++) {
 
-                    int clm_index = Equa->dof_idx[i][jj];
+                    int clm_index = Equa_ptr->dof_idx[i][jj];
 
                     if (clm_index >0)
-                        Equa->clm_idx[row_index-1][non_trivial++] = clm_index;
+                        Equa_ptr->clm_idx[row_index-1][non_trivial++] = clm_index;
 
                     else
                         continue;
@@ -185,10 +185,10 @@ void initial(
 
                     for (int jj=0; jj<node_dof; jj++) {
 
-                        int clm_index = Equa->dof_idx[ adj_topo[i][ii] -1 ][ jj ];
+                        int clm_index = Equa_ptr->dof_idx[ adj_topo[i][ii] -1 ][ jj ];
 
                         if (clm_index > 0)
-                            Equa->clm_idx[row_index-1][non_trivial++] = clm_index;
+                            Equa_ptr->clm_idx[row_index-1][non_trivial++] = clm_index;
 
                         else
                             continue;
@@ -198,21 +198,21 @@ void initial(
             else
                 continue;
 
-            Equa->row_nZN[row_index-1] = non_trivial;
-            Equa->nZeroN += non_trivial;
+            Equa_ptr->row_nZN[row_index-1] = non_trivial;
+            Equa_ptr->nZeroN += non_trivial;
         }
 
 
-    for (int i=0; i<Equa->equaN; i++)
-        int_qsort(Equa->clm_idx[i], Equa->row_nZN[i]);
+    for (int i=0; i<Equa_ptr->equaN; i++)
+        int_qsort(Equa_ptr->clm_idx[i], Equa_ptr->row_nZN[i]);
 
-    //show_non_trivial(*Equa);
+    //show_non_trivial(*Equa_ptr);
 
     free_adj(Coor.nodeN, adj_nodn, adj_topo);
 
     printf("Initial done!\n");
 
-    ID     = NULL;
-    E_ID   = NULL;
-    Emate  = NULL;
+    ID_ptr     = NULL;
+    E_ID_ptr   = NULL;
+    Emate_ptr  = NULL;
 }

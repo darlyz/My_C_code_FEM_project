@@ -12,10 +12,10 @@
 #include "fem.h"
 
 void readmesh(
-    Coor_Info   *Coor,
-    Node_Mesh   *Mesh,
-    Field_info  *Field,
-    int         *field_SN,
+    Coor_Info   *coor_ptr,
+    Node_Mesh   *mesh_ptr,
+    Field_info  *fields,
+    int         *field_SN_ptr,
     char        *dat_file
 );
 

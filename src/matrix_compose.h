@@ -13,23 +13,17 @@
 void matrix_compose(
     Coor_Info  Coor,
     Node_Mesh  Mesh,
-    Field_info *Field,
-    Equat_Set* Equa,
+    Field_info *field_ptr,
+    Equat_Set  *Equa_ptr,
     int Field_i
 );
 
-void set_matr(Elem_Matr* E_matr, int elem_dof, const Matr_Type *M_type);
+void set_elem(Elem_Info *E_info_ptr, int dim, int elem_nodeN, int varN, int gausN, const Result* res_ptr);
 
-void reset_matr(Elem_Matr* E_matr, int elem_dof, const Matr_Type *M_type);
+void clear_elem(Elem_Info *E_info_ptr, int gausN);
 
-void clear_matr(Elem_Matr* E_matr);
+void set_testfunc(Test_Func *test_func_ptr, int nodeN, int g_dim);
 
-void set_elem(Elem_Info *E_info, int dim, int elem_nodeN, int varN, int gausN, Result* res);
-
-void clear_elem(Elem_Info *E_info, int gausN);
-
-void set_testfunc(Test_Func *test_func, int nodeN, int g_dim);
-
-void clear_testfunc(Test_Func *test_func);
+void clear_testfunc(Test_Func *test_func_ptr);
 
 #endif

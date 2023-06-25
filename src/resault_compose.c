@@ -11,10 +11,10 @@
 #include "calc_shap.h"
 #include "tools.h"
 
-void response_result( Equat_Set Equa, Field_info* Field, int total_nodes ) {
+void response_result( Equat_Set Equa, Field_info* field_ptr, int total_nodes ) {
 
-    double *result  = Field->Res.result;
-    int     dof_num = Field->Res.dofN;
+    double *result  = field_ptr->Res.result;
+    int     dof_num = field_ptr->Res.dofN;
 
     for (int i=0; i<total_nodes; i++) {
 
@@ -30,15 +30,23 @@ void response_result( Equat_Set Equa, Field_info* Field, int total_nodes ) {
     printf("result composed done!\n");
 }
 
-void derivate_result(Field_info* Field, Coor_Info Coor, Node_Mesh Mesh) {
+void Init_derivate_result(Derivative_Resault* deriv_res_ptr, int dofN, int nodeN) {
+    deriv_res_ptr->dofN = dofN;
+    deriv_res_ptr->nodeN = nodeN;
+    deriv_res_ptr->result = (double*)calloc(nodeN*dofN, sizeof(double));
+    deriv_res_ptr->accum  = (int*   )calloc(nodeN, sizeof(int));
+}
 
-    Field->Deriv_Res.dofN = Coor.dim;
-    Field->Deriv_Res.nodeN = Coor.nodeN;
-    Field->Deriv_Res.result = (double*)calloc(Field->Deriv_Res.nodeN*Field->Deriv_Res.dofN, sizeof(double));
-    Field->Deriv_Res.accum  = (int*   )calloc(Field->Deriv_Res.nodeN, sizeof(int));
+static void deriv_elem_calc(int elem_i, Gaus_Info G_info, Elem_Info E_info,
+                            Derivative_Resault* deriv_res, Shap_Func shap_func,
+                            Test_Func test_func);
 
-    Materail  *Mate  = &(Field->Mate);
-    Mesh_Mate *Emate = &(Field->Emate);
+void derivate_result(Field_info* field_ptr, Coor_Info Coor, Node_Mesh Mesh) {
+
+    Init_derivate_result(&(field_ptr->Deriv_Res), Coor.dim, Coor.nodeN);
+
+    Materail  *Mate  = &(field_ptr->Mate);
+    Mesh_Mate *Emate = &(field_ptr->Emate);
 
     for (int type_i = 1; type_i <= Mesh.typeN; type_i ++)
     {
@@ -49,7 +57,7 @@ void derivate_result(Field_info* Field, Coor_Info Coor, Node_Mesh Mesh) {
         set_gaus(&G_info, Mesh.type[type_i-1], 0);
 
         Elem_Info E_info;
-        set_elem(&E_info, Coor.dim, elem_nodeN, Mate->varN, G_info.gausN, &(Field->Res));
+        set_elem(&E_info, Coor.dim, elem_nodeN, Mate->varN, G_info.gausN, &(field_ptr->Res));
 
         Shap_Func shap_func = get_shap_func(Mesh.type[type_i-1]);
 
@@ -82,16 +90,16 @@ void derivate_result(Field_info* Field, Coor_Info Coor, Node_Mesh Mesh) {
 
                 for (int dof_i=1; dof_i<=E_info.coup_dofN; dof_i++)
                     E_info.coup[(dof_i-1)*elem_nodeN + node_i-1] =
-                    Field->Res.result[(E_info.topo[node_i-1]-1)*E_info.coup_dofN + dof_i-1];
+                    field_ptr->Res.result[(E_info.topo[node_i-1]-1)*E_info.coup_dofN + dof_i-1];
             }
 
-            deriv_elem_calc(elem_i, G_info, E_info, &(Field->Deriv_Res), shap_func, test_func);
+            deriv_elem_calc(elem_i, G_info, E_info, &(field_ptr->Deriv_Res), shap_func, test_func);
         }
     }
 
-    for (int node_i = 1; node_i <= Field->Deriv_Res.nodeN; node_i ++){
-        for (int dof_i = 1; dof_i <= Field->Deriv_Res.dofN; dof_i ++)
-            Field->Deriv_Res.result[(node_i-1)*Field->Deriv_Res.dofN + dof_i-1] /= Field->Deriv_Res.accum[node_i-1];
+    for (int node_i = 1; node_i <= field_ptr->Deriv_Res.nodeN; node_i ++){
+        for (int dof_i = 1; dof_i <= field_ptr->Deriv_Res.dofN; dof_i ++)
+            field_ptr->Deriv_Res.result[(node_i-1)*field_ptr->Deriv_Res.dofN + dof_i-1] /= field_ptr->Deriv_Res.accum[node_i-1];
     }
 }
 

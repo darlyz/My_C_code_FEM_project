@@ -117,7 +117,7 @@ void write_result(Coor_Info Coor, Node_Mesh Mesh, Field_info Field, char* mesh_f
     }
 
     fprintf(WriteMesh, "End Values\n");
-
+/*
     result = Field.Deriv_Res.result;
     dof_num = Field.Deriv_Res.dofN;
 
@@ -144,7 +144,7 @@ void write_result(Coor_Info Coor, Node_Mesh Mesh, Field_info Field, char* mesh_f
     }
 
     fprintf(WriteMesh, "End Values\n");
-
+*/
     fclose(WriteMesh);
 
     printf("Write results done!\n");

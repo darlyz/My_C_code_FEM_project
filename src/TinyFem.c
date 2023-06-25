@@ -32,43 +32,43 @@ int main(int argc, char* argv[])
     Coor_Info Coor;
     Node_Mesh Mesh;
 
-    //Field_info *Field = (Field_info*)malloc(5*sizeof(Field_info));
-    Field_info Field[5];
+    //Field_info *fields = (Field_info*)malloc(5*sizeof(Field_info));
+    Field_info fields[5];
 
     int field_SN = 0;
 
-    readmesh( &Coor, &Mesh, Field, &field_SN, data_file );
+    readmesh( &Coor, &Mesh, fields, &field_SN, data_file );
     //char msh_file[255]; strcpy(msh_file, "./mesh/"); strcat(msh_file, prj);
-    //write_gmsh_mesh( &Coor, &Mesh, &(Field[0].E_ID), msh_file);
-    readmate( Field, field_SN, mate_file );
+    //write_gmsh_mesh( &Coor, &Mesh, &(fields[0].E_ID), msh_file);
+    readmate( fields, field_SN, mate_file );
 
     //show_coor(Coor);
     //show_mesh(Mesh);
-    //show_material(Field, field_SN);
-    //for (int i=0; i<field_SN; i++) show_elem_tag(Field[i].E_ID);
+    //show_material(fields, field_SN);
+    //for (int i=0; i<field_SN; i++) show_elem_tag(fields[i].E_ID);
     //Mesh.typeN = 1;
 
     Equat_Set Equa;
 
-    Field_info *Field_A = (Field + 0);
-    Field_A->Res.nodeN = Coor.nodeN;
-    Field_A->Res.dofN  = 1;
-    strcpy(Field_A->Tag, "ES");
-    strcpy(Field_A->Name, "ElectroStatic");
-    initial ( Coor, Mesh, Field_A, &Equa );
+    Field_info *Field_ES = (fields + 0);
+    Field_ES->Res.nodeN = Coor.nodeN;
+    Field_ES->Res.dofN  = 1;
+    strcpy(Field_ES->Tag, "ES");
+    strcpy(Field_ES->Name, "ElectroStatic");
+    initial ( Coor, Mesh, Field_ES, &Equa );
 
-    //for (int i=0; i<Coor.nodeN; i++) printf("%le\n",Field_A->Res.result[i]);
-    //for (int i=0; i<field_SN; i++) show_mesh_mate(Field[i].Emate);
+    //for (int i=0; i<Coor.nodeN; i++) printf("%le\n",Field_ES->Res.result[i]);
+    //for (int i=0; i<field_SN; i++) show_mesh_mate(fields[i].Emate);
 
-    matrix_compose( Coor, Mesh, Field_A, &Equa, 0 );
+    matrix_compose( Coor, Mesh, Field_ES, &Equa, 0 );
     matrsolv( &Equa );
-    response_result( Equa, Field_A, Coor.nodeN );
-    derivate_result( Field_A, Coor, Mesh);
-    write_result( Coor, Mesh, *Field_A, mesh_file, resl_file, prj );
+    response_result( Equa, Field_ES, Coor.nodeN );
+    //derivate_result( Field_ES, Coor, Mesh);
+    write_result( Coor, Mesh, *Field_ES, mesh_file, resl_file, prj );
 
     clear_coor( &Coor );
     clear_mesh( &Mesh );
-    clear_field( Field, field_SN );
+    clear_field( fields, field_SN );
 
     return 1;
 }

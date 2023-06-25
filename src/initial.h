@@ -10,13 +10,11 @@
 
 #include "fem.h"
 
-void free_adj(int total_nodes, int* adj_nodn, int** adj_topo);
-
 void initial(
     Coor_Info   Coor,
     Node_Mesh   Mesh,
-    Field_info *Field,
-    Equat_Set   *Equa
+    Field_info *field_ptr,
+    Equat_Set  *Equa_ptr
 );
 
 #endif

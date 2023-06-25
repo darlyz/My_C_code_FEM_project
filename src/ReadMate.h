@@ -10,6 +10,6 @@
 
 #include "fem.h"
 
-void readmate(Field_info *Field, int field_num, char* mat_file);
+void readmate(Field_info *Fields, int field_num, char* mat_file);
 
 #endif
