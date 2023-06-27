@@ -10,7 +10,7 @@
 double det(double*,int);
 
 // return *jacb_matr and |jacb_matr|
-double calc_jacobi(
+static double calc_jacobi(
     const double* node_coor,
     const double* refr_coor,
     double* jacb_matr,
@@ -42,7 +42,7 @@ double transe_coor(
 }
 
 // return *refr_shap
-void calc_refr_shap(
+static void calc_refr_shap(
     double* refr_shap,
     const double* refr_coor,
     int node_cont,
@@ -76,8 +76,13 @@ void set_refr_shap(
 }
 
 // return *real_shap
-void calc_real_shap(int dim, int node_cont, const double* refr_shap, double* real_shap, const double* invt_jacb)
-{
+void calc_real_shap(
+    int dim,
+    int node_cont,
+    const double* refr_shap,
+    double* real_shap,
+    const double* invt_jacb
+){
     for (int node_i=1; node_i<=node_cont; node_i++)
     {
         real_shap[(node_i-1)*(dim+1)] = refr_shap[(node_i-1)*(dim+1)];
@@ -87,6 +92,63 @@ void calc_real_shap(int dim, int node_cont, const double* refr_shap, double* rea
             for (int k=1; k<=dim; ++k)
                 temp += invt_jacb[(k-1)*dim + dim_i-1] * refr_shap[(node_i-1)*(dim+1) + k];
             real_shap[(node_i-1)*(dim+1) + dim_i] = temp;
+        }
+    }
+}
+
+// return *refr_coup
+static void calc_refr_coup(
+    double* refr_coup,
+    const double* refr_coor,
+    const double* coup,
+    int node_cont,
+    int dim,
+    Shap_Coup shap_coup
+){
+    for (int node_i=1; node_i<=node_cont; node_i++)
+    {
+        refr_coup[(node_i-1)*(dim+1)] = (*shap_coup.lagrange_shapcoup_ptr)(refr_coor, coup, node_i);
+        for (int dim_i=1; dim_i<=(dim+1); dim_i++)
+            refr_coup[(node_i-1)*(dim+1) + dim_i] = (*shap_coup.lagrange_deriva_shapcoup_ptr)(refr_coor, coup, node_i, dim_i);
+    }
+}
+
+// return **refr_coup
+void set_refr_coup(
+    double** refr_coup,
+    const double* gaus_coor,
+    const double* coup,
+    int gaus_num,
+    int node_cont,
+    int dim,
+    Shap_Coup shap_coup
+){
+    double refr_coor[]={0.0, 0.0, 0.0};
+    for (int gaus_i = 1; gaus_i <= gaus_num; gaus_i ++)
+    {
+        for (int i = 1; i <= dim; i ++)
+            refr_coor[i-1] = gaus_coor[(i-1)*gaus_num + gaus_i-1];
+        calc_refr_coup( refr_coup[gaus_i-1], refr_coor, coup, node_cont, dim, shap_coup);
+    }
+}
+
+// return *real_coup
+void calc_real_coup(
+    int dim,
+    int node_cont,
+    const double* refr_coup,
+    double* real_coup,
+    const double* invt_jacb
+){
+    for (int node_i=1; node_i<=node_cont; node_i++)
+    {
+        real_coup[(node_i-1)*(dim+1)] = refr_coup[(node_i-1)*(dim+1)];
+        for (int dim_i=1; dim_i<=dim; dim_i++)
+        {
+            double temp = 0.0;
+            for (int k=1; k<=dim; ++k)
+                temp += invt_jacb[(k-1)*dim + dim_i-1] * refr_coup[(node_i-1)*(dim+1) + k];
+            real_coup[(node_i-1)*(dim+1) + dim_i] = temp;
         }
     }
 }

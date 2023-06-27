@@ -10,16 +10,6 @@
 
 #include "shap_func.h"
 
-// return *jacb_matr and |jacb_matr|
-double calc_jacobi(
-    const double* node_coor,
-    const double* refr_coor,
-    double* jacb_matr,
-    int dim,
-    int shap_nodn,
-    Type_Lagrange_Deriva_Shapfunc_Ptr lagrange_deriva_shapfunc_ptr
-);
-
 // return *real_coor, *jacb_matr and |jacb_matr|
 double transe_coor(
     double* real_coor,
@@ -28,15 +18,6 @@ double transe_coor(
     double* jacb_matr,
     int dim,
     int shap_nodn,
-    Shap_Func shap_func
-);
-
-// return *refr_shap
-void calc_refr_shap(
-    double* refr_shap,
-    const double* refr_coor,
-    int node_cont,
-    int dim,
     Shap_Func shap_func
 );
 
@@ -51,6 +32,31 @@ void set_refr_shap(
 );
 
 // return *real_shap
-void calc_real_shap(int dim, int node_cont, const double* refr_shap, double* real_shap, const double* invt_jacb);
+void calc_real_shap(
+    int dim,
+    int node_cont,
+    const double* refr_shap,
+    double* real_shap,
+    const double* invt_jacb
+);
 
+// return **refr_coup
+void set_refr_coup(
+    double** refr_coup,
+    const double* gaus_coor,
+    const double* coup,
+    int gaus_num,
+    int node_cont,
+    int dim,
+    Shap_Coup shap_coup
+);
+
+// return *real_coup
+void calc_real_coup(
+    int dim,
+    int node_cont,
+    const double* refr_coup,
+    double* real_coup,
+    const double* invt_jacb
+);
 #endif

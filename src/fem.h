@@ -143,7 +143,8 @@ typedef struct Elem_Info
     double  *coor;      // element nodes coordinates, size = nodeN * g_dim
     double  *coup;      // element XX coupled value, size = nodeN * coup_dofN
     double  *mate;      // element materail parameter values
-    double **refr;      // element materail reference shape values
+    double **refr;      // element reference shape values
+    double **refr_coup; // element reference shape couple field resault
 }Elem_Info;
 
 typedef struct Equation_Set
@@ -161,6 +162,11 @@ typedef struct Test_Function
 {
     double *u, *ux, *uy, *uz, *real_shap;
 }Test_Func;
+
+typedef struct Derivate_Couple
+{
+    double *u, *ux, *uy, *uz, *real_coup;
+}Deriv_Coup;
 
 //double cal_elm_stif();
 

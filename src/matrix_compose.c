@@ -228,6 +228,9 @@ void set_elem(Elem_Info *E_info_ptr, int dim, int elem_nodeN, int varN, int gaus
     if (res_ptr != NULL){
         E_info_ptr->coup_dofN = res_ptr->dofN;
         E_info_ptr->coup = (double*)malloc(E_info_ptr->nodeN * E_info_ptr->coup_dofN * sizeof(double));
+        E_info_ptr->refr_coup = (double**)malloc(gausN * sizeof(double*));
+        for (int gaus_i=1; gaus_i<=gausN; gaus_i++)
+            E_info_ptr->refr_coup[gaus_i-1] = (double*)malloc(E_info_ptr->nodeN * (E_info_ptr->g_dim+1) * sizeof(double));
     }
 }
 

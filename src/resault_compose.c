@@ -38,8 +38,16 @@ void Init_derivate_result(Derivative_Resault* deriv_res_ptr, int dofN, int nodeN
 }
 
 static void deriv_elem_calc(int elem_i, Gaus_Info G_info, Elem_Info E_info,
-                            Derivative_Resault* deriv_res, Shap_Func shap_func,
-                            Test_Func test_func);
+                            Derivative_Resault* deriv_res_ptr, Shap_Func shap_func,
+                            Shap_Coup shap_coup, Deriv_Coup deriv_doup);
+
+static void set_derivcoup(Deriv_Coup* deriv_coup_ptr, int nodeN, int g_dim){
+    deriv_coup_ptr->u  = (double*)malloc(nodeN*sizeof(double));
+    deriv_coup_ptr->ux = (double*)malloc(nodeN*sizeof(double));
+    deriv_coup_ptr->uy = (double*)malloc(nodeN*sizeof(double));
+    deriv_coup_ptr->uz = (double*)malloc(nodeN*sizeof(double));
+    deriv_coup_ptr->real_coup = (double*)malloc(nodeN*(g_dim+1)*sizeof(double));
+}
 
 void derivate_result(Field_info* field_ptr, Coor_Info Coor, Node_Mesh Mesh) {
 
@@ -54,17 +62,16 @@ void derivate_result(Field_info* field_ptr, Coor_Info Coor, Node_Mesh Mesh) {
         int mesh_scale = Mesh.scale[type_i-1];
 
         Gaus_Info G_info;
-        set_gaus(&G_info, Mesh.type[type_i-1], 0);
+        set_gaus(&G_info, Mesh.type[type_i-1], 2);
 
         Elem_Info E_info;
         set_elem(&E_info, Coor.dim, elem_nodeN, Mate->varN, G_info.gausN, &(field_ptr->Res));
 
         Shap_Func shap_func = get_shap_func(Mesh.type[type_i-1]);
+        Shap_Coup shap_coup = get_shap_coef(Mesh.type[type_i-1]);
 
-        Test_Func test_func;
-        set_testfunc(&test_func, E_info.nodeN, E_info.g_dim);
-
-        set_refr_shap(E_info.refr, G_info.gcoor, G_info.gausN, E_info.nodeN, E_info.g_dim, shap_func);
+        Deriv_Coup deriv_coup;
+        set_derivcoup(&deriv_coup, E_info.nodeN, E_info.g_dim);
 
         for (int elem_i=1; elem_i<=mesh_scale; elem_i++)
         {
@@ -93,7 +100,7 @@ void derivate_result(Field_info* field_ptr, Coor_Info Coor, Node_Mesh Mesh) {
                     field_ptr->Res.result[(E_info.topo[node_i-1]-1)*E_info.coup_dofN + dof_i-1];
             }
 
-            deriv_elem_calc(elem_i, G_info, E_info, &(field_ptr->Deriv_Res), shap_func, test_func);
+            deriv_elem_calc(elem_i, G_info, E_info, &(field_ptr->Deriv_Res), shap_func, shap_coup, deriv_coup);
         }
     }
 
@@ -103,22 +110,29 @@ void derivate_result(Field_info* field_ptr, Coor_Info Coor, Node_Mesh Mesh) {
     }
 }
 
+static double idmatrix[] = {1., 0., 0., 0., 1., 0., 0., 0., 1.};
+
 void deriv_elem_calc(
     int elem_i,
     Gaus_Info  G_info,
     Elem_Info  E_info,
-    Derivative_Resault* deriv_res,
-    Shap_Func  shap_func,
-    Test_Func  test_func
+    Derivative_Resault* deriv_res_ptr,
+    Shap_Func shap_func,
+    Shap_Coup shap_coup,
+    Deriv_Coup deriv_doup
 ){
     static double x,y,z;
     static double rx,ry,rz;
     static double tempvar;
 
-    double * u = test_func.u ;
-    double *ux = test_func.ux;
-    double *uy = test_func.uy;
-    double *real_shap = test_func.real_shap;
+    double * u = deriv_doup.u ;
+    double *ux = deriv_doup.ux;
+    double *uy = deriv_doup.uy;
+    double *real_coup = deriv_doup.real_coup;
+
+    double *coef_u = (double*)malloc(E_info.nodeN*sizeof(double));
+    memcpy(coef_u, &(E_info.coup[(1-1)*E_info.nodeN]), E_info.nodeN*sizeof(double));
+    //double *coef_v = &(E_info.coup[(2-1)*E_info.nodeN]);
 
     static double eps,rho;
     eps = E_info.mate[0];
@@ -129,8 +143,44 @@ void deriv_elem_calc(
     static double jacb_matr[9];
     static double invt_jacb[9];
 
-    for (int node_i = 1; node_i < E_info.nodeN; node_i ++){
-        
+    set_refr_coup(E_info.refr_coup, G_info.gcoor, coef_u, G_info.gausN, E_info.nodeN, E_info.g_dim, shap_coup);
+
+    for (int gaus_i = 1; gaus_i <= G_info.gausN; gaus_i ++)
+    {
+        for (int i=1;i<=E_info.g_dim;i++)
+        {
+            refr_coor[i-1] = G_info.gcoor[(i-1)*G_info.gausN + gaus_i-1];
+            real_coor[i-1] = 0.;
+            for (int j=1;j<=E_info.g_dim;j++)
+                jacb_matr[(i-1)*E_info.g_dim+j-1]=0.;
+        }
+
+        double det = transe_coor(real_coor, refr_coor, E_info.coor, jacb_matr, E_info.g_dim, E_info.nodeN, shap_func);
+
+        double invt_det = inv(invt_jacb, jacb_matr, E_info.g_dim);
+
+        x  = real_coor[0];
+        y  = real_coor[1];
+
+        rx = refr_coor[0];
+        ry = refr_coor[1];
+
+        double weight = det*G_info.gweig[gaus_i-1];
+        calc_real_coup(E_info.g_dim, E_info.nodeN, E_info.refr_coup[gaus_i-1], real_coup, invt_jacb);
+
+        //for (int i=1; i<=E_info.nodeN; ++i)
+        //    u[i-1]  = +real_coup[(i-1)*(E_info.g_dim+1)+1-1];
+
+        for (int i=1; i<=E_info.nodeN; ++i)
+            //ux[i-1] = +real_coup[(i-1)*(E_info.g_dim+1)+2-1];
+            deriv_res_ptr->result[(E_info.topo[i-1]-1)*deriv_res_ptr->dofN + 0] += real_coup[(i-1)*(E_info.g_dim+1)+2-1] ;
+
+        for (int i=1; i<=E_info.nodeN; ++i)
+            //uy[i-1] = +real_coup[(i-1)*(E_info.g_dim+1)+3-1];
+            deriv_res_ptr->result[(E_info.topo[i-1]-1)*deriv_res_ptr->dofN + 1] += real_coup[(i-1)*(E_info.g_dim+1)+3-1] ;
     }
 
+    for (int i=1; i<=E_info.nodeN; ++i)
+        deriv_res_ptr->accum[E_info.topo[i-1]-1] += 1;
+ 
 }
